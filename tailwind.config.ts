@@ -18,6 +18,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'poppins': ['Poppins', 'sans-serif'],
+				'inter': ['Inter', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,7 +65,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				/* Sokoni Arena Custom Colors */
+				'kenyan-green': 'hsl(var(--kenyan-green))',
+				'warm-green': 'hsl(var(--warm-green))',
+				'light-purple': 'hsl(var(--light-purple))',
+				'light-yellow': 'hsl(var(--light-yellow))',
+				'light-pink': 'hsl(var(--light-pink))',
+			},
+			backgroundImage: {
+				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-card': 'var(--gradient-card)',
+				'gradient-hot-deal': 'var(--gradient-hot-deal)',
+			},
+			boxShadow: {
+				'soft': 'var(--shadow-soft)',
+				'glow': 'var(--shadow-glow)',
+				'card': 'var(--shadow-card)',
+			},
+			scale: {
+				'102': '1.02',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
