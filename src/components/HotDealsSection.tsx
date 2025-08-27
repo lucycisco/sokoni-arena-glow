@@ -171,10 +171,12 @@ const HotDealsSection = () => {
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <Button className="btn-hero px-8 py-4 text-lg">
-            View All Hot Deals
-            <Flame className="ml-2 w-5 h-5" />
-          </Button>
+          <a href="/hot-deals">
+            <Button className="btn-hero px-8 py-4 text-lg">
+              View All Hot Deals
+              <Flame className="ml-2 w-5 h-5" />
+            </Button>
+          </a>
         </motion.div>
       </div>
     </section>

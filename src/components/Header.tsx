@@ -41,8 +41,25 @@ const Header = () => {
               <Input
                 placeholder="Search for products, services, or sellers..."
                 className="pl-10 pr-4 py-3 rounded-xl border-2 border-primary/20 focus:border-primary bg-background/80"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const searchTerm = (e.target as HTMLInputElement).value;
+                    if (searchTerm.trim()) {
+                      window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+                    }
+                  }
+                }}
               />
-              <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 btn-hero px-6">
+              <Button 
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 btn-hero px-6"
+                onClick={(e) => {
+                  const input = e.currentTarget.parentElement?.querySelector('input') as HTMLInputElement;
+                  const searchTerm = input?.value;
+                  if (searchTerm?.trim()) {
+                    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+                  }
+                }}
+              >
                 Search
               </Button>
             </div>
@@ -97,6 +114,14 @@ const Header = () => {
             <Input
               placeholder="Search products..."
               className="pl-10 pr-4 py-3 rounded-xl border-2 border-primary/20 focus:border-primary"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const searchTerm = (e.target as HTMLInputElement).value;
+                  if (searchTerm.trim()) {
+                    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+                  }
+                }
+              }}
             />
           </div>
         </div>

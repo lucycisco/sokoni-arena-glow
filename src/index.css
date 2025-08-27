@@ -145,10 +145,21 @@ All colors MUST be HSL.
   .hot-deal-glow {
     @apply bg-gradient-to-r from-light-yellow to-light-pink p-1 rounded-xl;
     box-shadow: var(--shadow-glow);
+    animation: glow-pulse 3s ease-in-out infinite alternate;
   }
   
   .hot-deal-content {
     @apply bg-card rounded-lg p-6;
+  }
+
+  /* Glow animation */
+  @keyframes glow-pulse {
+    0% {
+      box-shadow: var(--shadow-glow);
+    }
+    100% {
+      box-shadow: 0 0 40px hsl(142 76% 36% / 0.25), 0 0 60px hsl(142 76% 36% / 0.15);
+    }
   }
 
   /* Category Card */
