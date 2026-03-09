@@ -43,8 +43,6 @@ interface Listing {
 
 interface Profile {
   username: string;
-  email?: string;
-  phone?: string | null;
   avatar_url: string | null;
   is_verified: boolean | null;
   created_at: string;
