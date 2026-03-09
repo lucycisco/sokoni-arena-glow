@@ -418,22 +418,7 @@ export default function ListingDetail() {
                   Message
                 </Button>
               )}
-              {seller?.phone && (
-                <Button asChild className="flex-1">
-                  <a href={`https://wa.me/${seller.phone.replace(/\D/g, '')}`} target="_blank">
-                    <MessageCircle className="h-4 w-4" />
-                    WhatsApp
-                  </a>
-                </Button>
-              )}
-              {seller?.phone && (
-                <Button variant="outline" asChild className="flex-1">
-                  <a href={`tel:${seller.phone}`}>
-                    <Phone className="h-4 w-4" />
-                    Call
-                  </a>
-                </Button>
-              )}
+              
             </div>
 
             <Separator />
