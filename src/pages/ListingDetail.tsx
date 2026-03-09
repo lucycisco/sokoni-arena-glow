@@ -448,18 +448,12 @@ export default function ListingDetail() {
                     </div>
                   </div>
                   
-                  <div className="space-y-2 text-sm">
-                    {seller.phone && (
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <a href={`tel:${seller.phone}`} className="hover:text-primary">{seller.phone}</a>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <a href={`mailto:${seller.email}`} className="hover:text-primary">{seller.email}</a>
-                    </div>
-                  </div>
+                  <Button variant="outline" size="sm" className="w-full mt-2" asChild>
+                    <Link to={`/profile/${listing.user_id}`}>
+                      <User className="h-4 w-4" />
+                      View Profile
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
             )}
