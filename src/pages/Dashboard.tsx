@@ -16,6 +16,7 @@ import { ListingForm } from "@/components/dashboard/ListingForm";
 import { SponsorRequestButton } from "@/components/dashboard/SponsorRequestButton";
 import { ProfileEditor } from "@/components/profile/ProfileEditor";
 import { FavoritesList } from "@/components/dashboard/FavoritesList";
+import { MyShopPanel } from "@/components/dashboard/MyShopPanel";
 import { cn } from "@/lib/utils";
 
 interface Listing {
