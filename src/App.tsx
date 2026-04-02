@@ -31,6 +31,8 @@ const Favorites = lazy(() => import("./pages/Favorites"));
 const Messages = lazy(() => import("./pages/Messages"));
 const FunCircle = lazy(() => import("./pages/FunCircle"));
 const FunCircleNotifications = lazy(() => import("./pages/FunCircleNotifications"));
+const Shops = lazy(() => import("./pages/Shops"));
+const ShopDetail = lazy(() => import("./pages/ShopDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Optimized QueryClient with better caching
