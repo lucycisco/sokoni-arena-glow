@@ -39,15 +39,13 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes (formerly cacheTime)
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
       retry: 1,
     },
   },
 });
-
-
 
 // Minimal loading fallback
 function PageLoader() {
@@ -81,6 +79,8 @@ const App = () => (
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/fun-circle" element={<FunCircle />} />
                 <Route path="/fun-circle/notifications" element={<FunCircleNotifications />} />
+                <Route path="/shops" element={<Shops />} />
+                <Route path="/shop/:slug" element={<ShopDetail />} />
                 <Route path="/profile/:userId" element={<Profile />} />
                 <Route
                   path="/dashboard"
