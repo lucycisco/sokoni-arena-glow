@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Menu, Search, ShoppingBag, Sparkles, Calendar, User, X, LogOut, LayoutDashboard, Shield, Heart, MessageCircle, Users } from "lucide-react";
+import { Menu, Search, ShoppingBag, Sparkles, Calendar, User, X, LogOut, LayoutDashboard, Shield, Heart, MessageCircle, Users, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
