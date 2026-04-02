@@ -371,6 +371,7 @@ export type Database = {
           longitude: number | null
           original_price: number | null
           price: number | null
+          shop_id: string | null
           sponsored_until: string | null
           status: Database["public"]["Enums"]["listing_status"]
           subcategory: string | null
@@ -400,6 +401,7 @@ export type Database = {
           longitude?: number | null
           original_price?: number | null
           price?: number | null
+          shop_id?: string | null
           sponsored_until?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           subcategory?: string | null
@@ -429,6 +431,7 @@ export type Database = {
           longitude?: number | null
           original_price?: number | null
           price?: number | null
+          shop_id?: string | null
           sponsored_until?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           subcategory?: string | null
@@ -437,7 +440,15 @@ export type Database = {
           user_id?: string
           views_count?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "listings_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -549,6 +560,133 @@ export type Database = {
         }
         Relationships: []
       }
+      shop_followers: {
+        Row: {
+          created_at: string
+          id: string
+          shop_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          shop_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          shop_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_followers_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          shop_id: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          shop_id: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          shop_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_reviews_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shops: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          followers_count: number | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          location: string | null
+          logo_url: string | null
+          name: string
+          phone: string | null
+          rating: number | null
+          slug: string
+          theme: string | null
+          updated_at: string
+          user_id: string
+          views_count: number | null
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          followers_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          location?: string | null
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          rating?: number | null
+          slug: string
+          theme?: string | null
+          updated_at?: string
+          user_id: string
+          views_count?: number | null
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          followers_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          location?: string | null
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          rating?: number | null
+          slug?: string
+          theme?: string | null
+          updated_at?: string
+          user_id?: string
+          views_count?: number | null
+        }
+        Relationships: []
+      }
       sponsor_requests: {
         Row: {
           admin_notes: string | null
@@ -646,6 +784,7 @@ export type Database = {
           location: string | null
           original_price: number | null
           price: number | null
+          shop_id: string | null
           sponsored_until: string | null
           status: Database["public"]["Enums"]["listing_status"] | null
           subcategory: string | null
@@ -673,6 +812,7 @@ export type Database = {
           location?: string | null
           original_price?: number | null
           price?: number | null
+          shop_id?: string | null
           sponsored_until?: string | null
           status?: Database["public"]["Enums"]["listing_status"] | null
           subcategory?: string | null
@@ -700,6 +840,7 @@ export type Database = {
           location?: string | null
           original_price?: number | null
           price?: number | null
+          shop_id?: string | null
           sponsored_until?: string | null
           status?: Database["public"]["Enums"]["listing_status"] | null
           subcategory?: string | null
@@ -708,7 +849,15 @@ export type Database = {
           user_id?: string | null
           views_count?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "listings_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles_public: {
         Row: {
