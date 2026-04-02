@@ -15,6 +15,7 @@ const navLinks = [
   { href: "/products", label: "Products", icon: ShoppingBag },
   { href: "/services", label: "Services", icon: Sparkles },
   { href: "/events", label: "Events", icon: Calendar },
+  { href: "/shops", label: "Shops", icon: Store },
   { href: "/fun-circle", label: "Fun Circle", icon: Users },
 ];
 
