@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMyShop } from "@/hooks/useShops";
 import { CreateShopForm } from "@/components/shops/CreateShopForm";
+import { ShopPromotionButton } from "@/components/dashboard/ShopPromotionButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Store, Plus, Eye, Users, Star, MapPin, ExternalLink, Loader2 } from "lucide-react";
+import { Store, Plus, Eye, Users, Star, MapPin, ExternalLink, Loader2, Crown } from "lucide-react";
 
 export function MyShopPanel() {
   const { shop, isLoading, refetch } = useMyShop();
@@ -26,19 +27,19 @@ export function MyShopPanel() {
           <Store className="h-16 w-16 text-muted-foreground mb-4" />
           <h3 className="font-display text-xl font-bold mb-2">Create Your Shop</h3>
           <p className="text-muted-foreground mb-6 max-w-md">
-            Launch your own branded shop within SokoniArena. Showcase all your products and services in one place!
+            Launch your own branded shop within SokoniArena. Your request will be reviewed by the admin team.
           </p>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button size="lg">
                 <Plus className="h-5 w-5 mr-1" />
-                Create Shop
+                Request Shop
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Create Your Shop</DialogTitle>
-                <DialogDescription>Set up your branded shop on SokoniArena</DialogDescription>
+                <DialogTitle>Request a Shop</DialogTitle>
+                <DialogDescription>Submit your shop details for admin approval</DialogDescription>
               </DialogHeader>
               <CreateShopForm
                 onSuccess={() => { setIsCreateOpen(false); refetch(); }}
@@ -63,7 +64,10 @@ export function MyShopPanel() {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-display text-xl font-bold mb-1">{shop.name}</h3>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-display text-xl font-bold">{shop.name}</h3>
+              {shop.is_promoted && <Crown className="h-5 w-5 text-gold fill-gold/20" />}
+            </div>
             {shop.description && (
               <p className="text-muted-foreground text-sm mb-3">{shop.description}</p>
             )}
@@ -79,12 +83,14 @@ export function MyShopPanel() {
                 </span>
               )}
             </div>
-            <Button asChild>
-              <Link to={`/shop/${shop.slug}`}>
-                <ExternalLink className="h-4 w-4 mr-1" />
-                View Shop
-              </Link>
-            </Button>
+            <div className="flex items-center gap-3 flex-wrap">
+              <Button asChild>
+                <Link to={`/shop/${shop.slug}`}>
+                  <ExternalLink className="h-4 w-4 mr-1" />View Shop
+                </Link>
+              </Button>
+              <ShopPromotionButton shopId={shop.id} shopName={shop.name} />
+            </div>
           </div>
         </div>
       </CardContent>

@@ -13,8 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import {
   MapPin, Star, Users, Eye, UserPlus, UserMinus, Package,
-  Sparkles, Calendar, Loader2, MessageCircle, Store, CheckCircle
+  Sparkles, Calendar, Loader2, MessageCircle, Store, CheckCircle,
+  Crown, Phone, Mail, ExternalLink
 } from "lucide-react";
+import { FaWhatsapp, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaYoutube, FaLinkedin, FaTelegram } from "react-icons/fa6";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -219,7 +221,7 @@ export default function ShopDetail() {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <Button
                 onClick={toggleFollow}
                 variant={isFollowing ? "outline" : "default"}
@@ -228,7 +230,62 @@ export default function ShopDetail() {
                 {isFollowing ? <UserMinus className="h-4 w-4 mr-1" /> : <UserPlus className="h-4 w-4 mr-1" />}
                 {isFollowing ? "Unfollow" : "Follow"}
               </Button>
+              {shop.phone && (
+                <Button variant="outline" size="sm" asChild>
+                  <a href={`tel:${shop.phone}`}><Phone className="h-4 w-4 mr-1" />Call</a>
+                </Button>
+              )}
+              {shop.email && (
+                <Button variant="outline" size="sm" asChild>
+                  <a href={`mailto:${shop.email}`}><Mail className="h-4 w-4 mr-1" />Email</a>
+                </Button>
+              )}
             </div>
+            {/* Social Media Links */}
+            {(shop.whatsapp || shop.facebook || shop.instagram || shop.twitter || shop.tiktok || shop.youtube || shop.linkedin || shop.telegram) && (
+              <div className="flex items-center gap-2 mt-3 flex-wrap">
+                {shop.whatsapp && (
+                  <a href={`https://wa.me/${shop.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors">
+                    <FaWhatsapp className="h-5 w-5" />
+                  </a>
+                )}
+                {shop.facebook && (
+                  <a href={shop.facebook} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 transition-colors">
+                    <FaFacebook className="h-5 w-5" />
+                  </a>
+                )}
+                {shop.instagram && (
+                  <a href={shop.instagram} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-pink-500/10 text-pink-500 hover:bg-pink-500/20 transition-colors">
+                    <FaInstagram className="h-5 w-5" />
+                  </a>
+                )}
+                {shop.twitter && (
+                  <a href={shop.twitter} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-foreground/10 text-foreground hover:bg-foreground/20 transition-colors">
+                    <FaXTwitter className="h-5 w-5" />
+                  </a>
+                )}
+                {shop.tiktok && (
+                  <a href={shop.tiktok} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-foreground/10 text-foreground hover:bg-foreground/20 transition-colors">
+                    <FaTiktok className="h-5 w-5" />
+                  </a>
+                )}
+                {shop.youtube && (
+                  <a href={shop.youtube} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors">
+                    <FaYoutube className="h-5 w-5" />
+                  </a>
+                )}
+                {shop.linkedin && (
+                  <a href={shop.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-blue-700/10 text-blue-700 hover:bg-blue-700/20 transition-colors">
+                    <FaLinkedin className="h-5 w-5" />
+                  </a>
+                )}
+                {shop.telegram && (
+                  <a href={shop.telegram} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition-colors">
+                    <FaTelegram className="h-5 w-5" />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

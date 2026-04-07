@@ -20,6 +20,17 @@ export interface Shop {
   location: string | null;
   phone: string | null;
   email: string | null;
+  category: string | null;
+  is_promoted: boolean;
+  promoted_until: string | null;
+  whatsapp: string | null;
+  facebook: string | null;
+  instagram: string | null;
+  twitter: string | null;
+  tiktok: string | null;
+  youtube: string | null;
+  linkedin: string | null;
+  telegram: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -38,6 +49,29 @@ export function useShops(limit?: number) {
 
       if (limit) query = query.limit(limit);
       const { data, error } = await query;
+      if (!error && data) setShops(data as Shop[]);
+      setIsLoading(false);
+    };
+    fetchShops();
+  }, [limit]);
+
+  return { shops, isLoading };
+}
+
+export function usePromotedShops(limit: number = 10) {
+  const [shops, setShops] = useState<Shop[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchShops = async () => {
+      // First try promoted shops, then fill with top shops by followers
+      const { data, error } = await supabase
+        .from("shops")
+        .select("*")
+        .eq("is_active", true)
+        .order("is_promoted", { ascending: false })
+        .order("followers_count", { ascending: false })
+        .limit(limit);
       if (!error && data) setShops(data as Shop[]);
       setIsLoading(false);
     };
