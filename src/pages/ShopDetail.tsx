@@ -13,8 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import {
   MapPin, Star, Users, Eye, UserPlus, UserMinus, Package,
-  Sparkles, Calendar, Loader2, MessageCircle, Store, CheckCircle
+  Sparkles, Calendar, Loader2, MessageCircle, Store, CheckCircle,
+  Crown, Phone, Mail, ExternalLink
 } from "lucide-react";
+import { FaWhatsapp, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaYoutube, FaLinkedin, FaTelegram } from "react-icons/fa6";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
