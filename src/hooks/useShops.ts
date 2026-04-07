@@ -47,6 +47,29 @@ export function useShops(limit?: number) {
   return { shops, isLoading };
 }
 
+export function usePromotedShops(limit: number = 10) {
+  const [shops, setShops] = useState<Shop[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchShops = async () => {
+      // First try promoted shops, then fill with top shops by followers
+      const { data, error } = await supabase
+        .from("shops")
+        .select("*")
+        .eq("is_active", true)
+        .order("is_promoted", { ascending: false })
+        .order("followers_count", { ascending: false })
+        .limit(limit);
+      if (!error && data) setShops(data as Shop[]);
+      setIsLoading(false);
+    };
+    fetchShops();
+  }, [limit]);
+
+  return { shops, isLoading };
+}
+
 export function useShopBySlug(slug: string | undefined) {
   const [shop, setShop] = useState<Shop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
