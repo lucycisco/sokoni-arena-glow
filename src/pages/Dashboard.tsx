@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Plus, Eye, Edit, Trash2, Package, Sparkles, Calendar, TrendingUp, Heart, Loader2, User, Shield, Store } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, Package, Sparkles, Calendar, TrendingUp, Heart, Loader2, User, Shield, Store, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +17,7 @@ import { SponsorRequestButton } from "@/components/dashboard/SponsorRequestButto
 import { ProfileEditor } from "@/components/profile/ProfileEditor";
 import { FavoritesList } from "@/components/dashboard/FavoritesList";
 import { MyShopPanel } from "@/components/dashboard/MyShopPanel";
+import { DashboardMessages } from "@/components/dashboard/DashboardMessages";
 import { cn } from "@/lib/utils";
 
 interface Listing {
@@ -55,12 +56,7 @@ export default function Dashboard() {
   const [listingTypeFilter, setListingTypeFilter] = useState("all");
   const [dashboardTab, setDashboardTab] = useState(searchParams.get("tab") || "listings");
 
-  const [stats, setStats] = useState({
-    total: 0,
-    active: 0,
-    views: 0,
-    favorites: 0,
-  });
+  const [stats, setStats] = useState({ total: 0, active: 0, views: 0, favorites: 0 });
 
   const fetchListings = async () => {
     if (!user) return;
@@ -130,9 +126,10 @@ export default function Dashboard() {
               </Button>
             )}
             <Tabs value={dashboardTab} onValueChange={(v) => { setDashboardTab(v); setSearchParams({ tab: v }); }}>
-              <TabsList>
+              <TabsList className="flex-wrap h-auto">
                 <TabsTrigger value="listings"><Package className="h-4 w-4 mr-1" />Listings</TabsTrigger>
                 <TabsTrigger value="shop"><Store className="h-4 w-4 mr-1" />My Shop</TabsTrigger>
+                <TabsTrigger value="messages"><Mail className="h-4 w-4 mr-1" />Messages</TabsTrigger>
                 <TabsTrigger value="favorites"><Heart className="h-4 w-4 mr-1" />Favorites</TabsTrigger>
                 <TabsTrigger value="profile"><User className="h-4 w-4 mr-1" />Profile</TabsTrigger>
               </TabsList>
@@ -146,6 +143,8 @@ export default function Dashboard() {
           <FavoritesList />
         ) : dashboardTab === "shop" ? (
           <MyShopPanel />
+        ) : dashboardTab === "messages" ? (
+          <DashboardMessages />
         ) : (
           <>
             {/* Stats Grid */}
