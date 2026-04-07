@@ -8,7 +8,7 @@ import { ImagePlus, X, Loader2, Send, Palette, Type } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFunCircleStories } from "@/hooks/useFunCircleStories";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/untyped-client";
 import { useToast } from "@/hooks/use-toast";
 import {
   STORY_BACKGROUND_COLORS,

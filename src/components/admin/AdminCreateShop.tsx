@@ -9,7 +9,7 @@ import { Store, Loader2, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/untyped-client";
 
 const SHOP_CATEGORIES = [
   "Electronics", "Fashion", "Home & Garden", "Food & Dining", "Health & Beauty",
