@@ -24,22 +24,21 @@ export function ShopPromotionButton({ shopId, shopName }: ShopPromotionButtonPro
 
   useEffect(() => {
     if (user && shopId) {
-      supabase
-        .from("shop_promotion_requests")
+      (supabase.from("shop_promotion_requests" as any) as any)
         .select("*")
         .eq("shop_id", shopId)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle()
-        .then(({ data }) => setExistingRequest(data));
+        .then(({ data }: any) => setExistingRequest(data));
     }
   }, [user, shopId]);
 
   const handleSubmit = async () => {
     if (!user) return;
     setIsLoading(true);
-    const { error } = await supabase.from("shop_promotion_requests").insert({
+    const { error } = await (supabase.from("shop_promotion_requests" as any) as any).insert({
       shop_id: shopId,
       user_id: user.id,
       duration_days: parseInt(duration),
@@ -49,7 +48,7 @@ export function ShopPromotionButton({ shopId, shopName }: ShopPromotionButtonPro
     } else {
       toast({ title: "Promotion request submitted!", description: "Pending admin approval." });
       setIsOpen(false);
-      const { data } = await supabase.from("shop_promotion_requests").select("*").eq("shop_id", shopId).eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+      const { data } = await (supabase.from("shop_promotion_requests" as any) as any).select("*").eq("shop_id", shopId).eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
       setExistingRequest(data);
     }
     setIsLoading(false);

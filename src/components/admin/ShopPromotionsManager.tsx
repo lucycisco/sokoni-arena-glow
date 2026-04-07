@@ -23,13 +23,13 @@ export function ShopPromotionsManager() {
 
   const fetchRequests = async () => {
     setIsLoading(true);
-    const { data } = await supabase.from("shop_promotion_requests").select("*").order("requested_at", { ascending: false });
+    const { data } = await (supabase.from("shop_promotion_requests" as any) as any).select("*").order("requested_at", { ascending: false });
     if (data) {
       const shopIds = [...new Set(data.map((r: any) => r.shop_id))];
       const userIds = [...new Set(data.map((r: any) => r.user_id))];
       const [{ data: shops }, { data: profiles }] = await Promise.all([
-        supabase.from("shops").select("id, name, logo_url").in("id", shopIds),
-        supabase.from("profiles").select("user_id, username, email").in("user_id", userIds),
+        supabase.from("shops").select("id, name, logo_url").in("id", shopIds as string[]),
+        supabase.from("profiles").select("user_id, username, email").in("user_id", userIds as string[]),
       ]);
       const sMap = new Map((shops || []).map((s: any) => [s.id, s]));
       const pMap = new Map((profiles || []).map((p: any) => [p.user_id, p]));
@@ -43,7 +43,7 @@ export function ShopPromotionsManager() {
   const handleAction = async (action: "approved" | "rejected") => {
     if (!selected || !user) return;
     setIsProcessing(true);
-    const { error } = await supabase.from("shop_promotion_requests").update({
+    const { error } = await (supabase.from("shop_promotion_requests" as any) as any).update({
       status: action, reviewed_at: new Date().toISOString(), reviewed_by: user.id, admin_notes: adminNotes || null,
     }).eq("id", selected.id);
     if (error) {
@@ -57,7 +57,7 @@ export function ShopPromotionsManager() {
     setIsProcessing(false);
   };
 
-  const pendingCount = requests.filter((r) => r.status === "pending").length;
+  const pendingCount = requests.filter((r: any) => r.status === "pending").length;
 
   return (
     <Card>

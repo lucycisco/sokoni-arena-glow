@@ -38,13 +38,12 @@ export function ShopRequestsManager() {
 
   const fetchRequests = async () => {
     setIsLoading(true);
-    const { data } = await supabase
-      .from("shop_creation_requests")
+    const { data } = await (supabase.from("shop_creation_requests" as any) as any)
       .select("*")
       .order("requested_at", { ascending: false });
     if (data) {
       const userIds = [...new Set(data.map((r: any) => r.user_id))];
-      const { data: profiles } = await supabase.from("profiles").select("user_id, username, email").in("user_id", userIds);
+      const { data: profiles } = await supabase.from("profiles").select("user_id, username, email").in("user_id", userIds as string[]);
       const pMap = new Map((profiles || []).map((p: any) => [p.user_id, p]));
       setRequests(data.map((r: any) => ({ ...r, profile: pMap.get(r.user_id) })));
     }
@@ -56,8 +55,7 @@ export function ShopRequestsManager() {
   const handleAction = async (action: "approved" | "declined") => {
     if (!selected || !user) return;
     setIsProcessing(true);
-    const { error } = await supabase
-      .from("shop_creation_requests")
+    const { error } = await (supabase.from("shop_creation_requests" as any) as any)
       .update({
         status: action,
         reviewed_at: new Date().toISOString(),

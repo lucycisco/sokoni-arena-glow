@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mail, MailOpen, Loader2, Inbox } from "lucide-react";
@@ -23,8 +23,7 @@ export function DashboardMessages() {
 
   const fetchMessages = async () => {
     if (!user) return;
-    const { data } = await supabase
-      .from("dashboard_messages")
+    const { data } = await (supabase.from("dashboard_messages" as any) as any)
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
@@ -35,7 +34,7 @@ export function DashboardMessages() {
   useEffect(() => { fetchMessages(); }, [user]);
 
   const markRead = async (id: string) => {
-    await supabase.from("dashboard_messages").update({ is_read: true }).eq("id", id);
+    await (supabase.from("dashboard_messages" as any) as any).update({ is_read: true }).eq("id", id);
     setMessages((prev) => prev.map((m) => m.id === id ? { ...m, is_read: true } : m));
   };
 

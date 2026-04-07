@@ -20,6 +20,17 @@ export interface Shop {
   location: string | null;
   phone: string | null;
   email: string | null;
+  category: string | null;
+  is_promoted: boolean;
+  promoted_until: string | null;
+  whatsapp: string | null;
+  facebook: string | null;
+  instagram: string | null;
+  twitter: string | null;
+  tiktok: string | null;
+  youtube: string | null;
+  linkedin: string | null;
+  telegram: string | null;
   created_at: string;
   updated_at: string;
 }
