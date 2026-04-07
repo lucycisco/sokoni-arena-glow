@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useListings } from "@/hooks/useListings";
 import { format } from "date-fns";
 import { useState, useEffect, useMemo, memo } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/untyped-client";
 
 interface SponsoredListing {
   id: string;

@@ -11,7 +11,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Plus, Eye, Edit, Trash2, Package, Sparkles, Calendar, TrendingUp, Heart, Loader2, User, Shield, Store, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/untyped-client";
 import { ListingForm } from "@/components/dashboard/ListingForm";
 import { SponsorRequestButton } from "@/components/dashboard/SponsorRequestButton";
 import { ProfileEditor } from "@/components/profile/ProfileEditor";

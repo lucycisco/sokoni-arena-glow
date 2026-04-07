@@ -10,7 +10,7 @@ import {
   ChevronLeft, ChevronRight, Star, Package, Sparkles, 
   Clock, Truck, Tag, User, Loader2, MessageCircle
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/untyped-client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useConversation } from "@/hooks/useConversation";

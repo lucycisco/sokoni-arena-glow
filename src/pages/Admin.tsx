@@ -10,7 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Shield, Users, Package, FileText, Search, Trash2, Eye, Loader2, AlertTriangle, Star, Store, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/untyped-client";
 import { format } from "date-fns";
 import { SponsorRequestsManager } from "@/components/admin/SponsorRequestsManager";
 import { ShopRequestsManager } from "@/components/admin/ShopRequestsManager";

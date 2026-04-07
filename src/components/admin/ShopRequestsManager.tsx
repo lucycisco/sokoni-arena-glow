@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Check, X, Clock, Store, Loader2, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/untyped-client";
 import { format } from "date-fns";
 
 interface ShopRequest {
