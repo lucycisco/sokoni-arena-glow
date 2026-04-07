@@ -69,7 +69,7 @@ export default function Favorites() {
 
       if (data) {
         // Filter out favorites where listing was deleted or status is not available
-        const validFavorites = data.filter(
+        const validFavorites = (data as any[]).filter(
           (f: any) => f.listings && f.listings.status === "available"
         ) as FavoriteWithListing[];
         setFavorites(validFavorites);

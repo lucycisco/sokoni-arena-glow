@@ -1,9 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/untyped-client";
-import { Tables } from "@/integrations/supabase/types";
-
-// Public listing type excludes sensitive location coordinates
-type Listing = Omit<Tables<"listings">, "latitude" | "longitude">;
+// Public listing type
+type Listing = any;
 type ListingType = "product" | "service" | "event";
 
 interface UseListingsOptions {
