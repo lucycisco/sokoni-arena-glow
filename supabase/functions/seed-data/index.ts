@@ -20,8 +20,18 @@ serve(async (req) => {
     const { action, data } = body;
     const results: string[] = [];
 
+    if (action === "migrate") {
+      // Run migration SQL via rpc
+      const { error } = await admin.rpc("exec_sql", { sql: data.sql });
+      if (error) {
+        results.push(`migration error: ${error.message}`);
+      } else {
+        results.push("migration applied");
+      }
+      return new Response(JSON.stringify({ results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     if (action === "clear") {
-      // Clear all data in reverse dependency order
       const tables = [
         "fun_circle_messages", "fun_circle_conversations", "fun_circle_story_reactions",
         "fun_circle_comments", "fun_circle_mentions", "fun_circle_stories", "fun_circle_friends",
@@ -32,9 +42,12 @@ serve(async (req) => {
       ];
       for (const t of tables) {
         const { error } = await admin.from(t).delete().neq("id", "00000000-0000-0000-0000-000000000000");
-        results.push(`${t}: ${error ? error.message : "cleared"}`);
+        if (error && !error.message.includes("Could not find")) {
+          results.push(`${t}: ${error.message}`);
+        } else {
+          results.push(`${t}: cleared`);
+        }
       }
-      // Delete all auth users
       const { data: authUsers } = await admin.auth.admin.listUsers({ perPage: 1000 });
       if (authUsers?.users) {
         for (const u of authUsers.users) {
@@ -47,6 +60,7 @@ serve(async (req) => {
 
     if (action === "seed_auth") {
       const users = data.auth_users || [];
+      let created = 0, errors = 0;
       for (const u of users) {
         const { error } = await admin.auth.admin.createUser({
           user_metadata: { username: u.email.split("@")[0] },
@@ -56,10 +70,14 @@ serve(async (req) => {
           id: u.id,
         });
         if (error && !error.message.includes("already")) {
-          results.push(`auth ${u.email}: ${error.message}`);
+          errors++;
+          if (errors <= 3) results.push(`auth ${u.email}: ${error.message}`);
+        } else {
+          created++;
         }
       }
-      // Seed user_roles
+      results.push(`auth users: ${created} created, ${errors} errors`);
+      
       if (data.user_roles?.length) {
         const { error } = await admin.from("user_roles").upsert(data.user_roles, { onConflict: "id" });
         results.push(`user_roles: ${error ? error.message : `${data.user_roles.length} rows`}`);
@@ -70,7 +88,6 @@ serve(async (req) => {
     if (action === "seed_table") {
       const { table, rows } = data;
       if (rows?.length) {
-        // Batch in groups of 50
         for (let i = 0; i < rows.length; i += 50) {
           const batch = rows.slice(i, i + 50);
           const { error } = await admin.from(table).upsert(batch, { onConflict: "id" });
