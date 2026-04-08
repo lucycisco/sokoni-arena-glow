@@ -19,7 +19,7 @@ import { ProfileEditor } from "@/components/profile/ProfileEditor";
 import { FavoritesList } from "@/components/dashboard/FavoritesList";
 import { MyShopPanel } from "@/components/dashboard/MyShopPanel";
 import { DashboardMessages } from "@/components/dashboard/DashboardMessages";
-import { cn } from "@/lib/utils";
+import { cn, parseImages } from "@/lib/utils";
 
 interface Listing {
   id: string;
