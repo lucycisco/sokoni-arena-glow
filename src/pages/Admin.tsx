@@ -17,6 +17,8 @@ import { ShopRequestsManager } from "@/components/admin/ShopRequestsManager";
 import { ShopPromotionsManager } from "@/components/admin/ShopPromotionsManager";
 import { FeaturedRequestsManager } from "@/components/admin/FeaturedRequestsManager";
 import { AdminCreateShop } from "@/components/admin/AdminCreateShop";
+import { AdminShopEditor } from "@/components/admin/AdminShopEditor";
+import { AdminUserEditor } from "@/components/admin/AdminUserEditor";
 
 interface Listing {
   id: string;
@@ -162,6 +164,7 @@ export default function Admin() {
               <TabsTrigger value="featured">Featured</TabsTrigger>
               <TabsTrigger value="shop-requests"><Store className="h-4 w-4 mr-1" />Shop Requests</TabsTrigger>
               <TabsTrigger value="shop-promos"><Crown className="h-4 w-4 mr-1" />Shop Promos</TabsTrigger>
+              <TabsTrigger value="shops"><Store className="h-4 w-4 mr-1" />Shops</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="audit">Audit Logs</TabsTrigger>
             </TabsList>
@@ -221,36 +224,9 @@ export default function Admin() {
             {activeTab === "featured" && <FeaturedRequestsManager />}
             {activeTab === "shop-requests" && <ShopRequestsManager />}
             {activeTab === "shop-promos" && <ShopPromotionsManager />}
+            {activeTab === "shops" && <AdminShopEditor />}
 
-            {activeTab === "users" && (
-              <Card>
-                <CardHeader><CardTitle>All Users</CardTitle><CardDescription>View and manage registered users</CardDescription></CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Username</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead>Verified</TableHead>
-                        <TableHead>Joined</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredUsers.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell className="font-medium">{user.username}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>{user.phone || "—"}</TableCell>
-                          <TableCell><Badge variant={user.is_verified ? "default" : "secondary"}>{user.is_verified ? "Yes" : "No"}</Badge></TableCell>
-                          <TableCell>{format(new Date(user.created_at), "MMM d, yyyy")}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            )}
+            {activeTab === "users" && <AdminUserEditor />}
 
             {activeTab === "audit" && (
               <Card>
