@@ -10,6 +10,40 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+
+// Rotating colors/fonts for the NEW badge - changes every hour
+const badgeStyles = [
+  { bg: "bg-gradient-to-r from-yellow-400 to-amber-500", text: "text-amber-950", font: "font-bold" },
+  { bg: "bg-gradient-to-r from-emerald-400 to-green-500", text: "text-green-950", font: "font-black" },
+  { bg: "bg-gradient-to-r from-pink-400 to-rose-500", text: "text-rose-950", font: "font-extrabold" },
+  { bg: "bg-gradient-to-r from-violet-400 to-purple-500", text: "text-purple-950", font: "font-bold italic" },
+  { bg: "bg-gradient-to-r from-cyan-400 to-blue-500", text: "text-blue-950", font: "font-black" },
+  { bg: "bg-gradient-to-r from-orange-400 to-red-500", text: "text-red-950", font: "font-extrabold" },
+];
+
+function NewFeatureBadge() {
+  const [styleIndex, setStyleIndex] = useState(() => Math.floor(Date.now() / 3600000) % badgeStyles.length);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStyleIndex(Math.floor(Date.now() / 3600000) % badgeStyles.length);
+    }, 60000); // check every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  const style = badgeStyles[styleIndex];
+
+  return (
+    <span className={cn(
+      "absolute -top-3 -right-3 px-1.5 py-0.5 text-[9px] rounded-full shadow-lg animate-bounce",
+      style.bg, style.text, style.font,
+      "ring-2 ring-background"
+    )}>
+      NEW✨
+    </span>
+  );
+}
 
 const navLinks = [
   { href: "/products", label: "Products", icon: ShoppingBag },
