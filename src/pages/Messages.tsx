@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/untyped-client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { format, isToday, isYesterday } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, parseImages } from "@/lib/utils";
 import {
   MessageCircle,
   Send,
