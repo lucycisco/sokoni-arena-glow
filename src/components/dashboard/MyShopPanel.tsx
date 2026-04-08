@@ -3,14 +3,16 @@ import { Link } from "react-router-dom";
 import { useMyShop } from "@/hooks/useShops";
 import { CreateShopForm } from "@/components/shops/CreateShopForm";
 import { ShopPromotionButton } from "@/components/dashboard/ShopPromotionButton";
+import { ShopAdsManager } from "@/components/admin/ShopAdsManager";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Store, Plus, Eye, Users, Star, MapPin, ExternalLink, Loader2, Crown } from "lucide-react";
+import { Store, Plus, Eye, Users, Star, MapPin, ExternalLink, Loader2, Crown, Megaphone } from "lucide-react";
 
 export function MyShopPanel() {
   const { shop, isLoading, refetch } = useMyShop();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [showAds, setShowAds] = useState(false);
 
   if (isLoading) {
     return (
@@ -90,9 +92,19 @@ export function MyShopPanel() {
                 </Link>
               </Button>
               <ShopPromotionButton shopId={shop.id} shopName={shop.name} />
+              <Button variant="outline" onClick={() => setShowAds(!showAds)}>
+                <Megaphone className="h-4 w-4 mr-1" />
+                {showAds ? "Hide Ads" : "Manage Ads"}
+              </Button>
             </div>
           </div>
         </div>
+
+        {showAds && (
+          <div className="mt-6 border-t pt-6">
+            <ShopAdsManager shopId={shop.id} shopName={shop.name} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

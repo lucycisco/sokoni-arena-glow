@@ -19,6 +19,7 @@ import { FeaturedRequestsManager } from "@/components/admin/FeaturedRequestsMana
 import { AdminCreateShop } from "@/components/admin/AdminCreateShop";
 import { AdminShopEditor } from "@/components/admin/AdminShopEditor";
 import { AdminUserEditor } from "@/components/admin/AdminUserEditor";
+import { ShopAdsManager } from "@/components/admin/ShopAdsManager";
 
 interface Listing {
   id: string;
@@ -165,6 +166,7 @@ export default function Admin() {
               <TabsTrigger value="shop-requests"><Store className="h-4 w-4 mr-1" />Shop Requests</TabsTrigger>
               <TabsTrigger value="shop-promos"><Crown className="h-4 w-4 mr-1" />Shop Promos</TabsTrigger>
               <TabsTrigger value="shops"><Store className="h-4 w-4 mr-1" />Shops</TabsTrigger>
+              <TabsTrigger value="shop-ads">Shop Ads</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="audit">Audit Logs</TabsTrigger>
             </TabsList>
@@ -225,6 +227,7 @@ export default function Admin() {
             {activeTab === "shop-requests" && <ShopRequestsManager />}
             {activeTab === "shop-promos" && <ShopPromotionsManager />}
             {activeTab === "shops" && <AdminShopEditor />}
+            {activeTab === "shop-ads" && <ShopAdsManager isAdmin />}
 
             {activeTab === "users" && <AdminUserEditor />}
 
