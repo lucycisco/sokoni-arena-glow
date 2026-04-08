@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { FaWhatsapp, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaYoutube, FaLinkedin, FaTelegram } from "react-icons/fa6";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, parseImages } from "@/lib/utils";
 
 interface ShopListing {
   id: string;
