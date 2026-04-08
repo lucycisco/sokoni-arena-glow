@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/untyped-client";
 import { ListingForm } from "@/components/dashboard/ListingForm";
 import { SponsorRequestButton } from "@/components/dashboard/SponsorRequestButton";
+import { FeaturedRequestButton } from "@/components/dashboard/FeaturedRequestButton";
 import { ProfileEditor } from "@/components/profile/ProfileEditor";
 import { FavoritesList } from "@/components/dashboard/FavoritesList";
 import { MyShopPanel } from "@/components/dashboard/MyShopPanel";
@@ -229,6 +230,7 @@ export default function Dashboard() {
                             </Select>
                             <Button variant="ghost" size="icon" onClick={() => handleEdit(listing)}><Edit className="h-4 w-4" /></Button>
                             <SponsorRequestButton listingId={listing.id} listingTitle={listing.title} />
+                            <FeaturedRequestButton listingId={listing.id} listingTitle={listing.title} />
                             <AlertDialog>
                               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
                               <AlertDialogContent>
