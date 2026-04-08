@@ -289,6 +289,9 @@ export default function ShopDetail() {
           </div>
         </div>
 
+        {/* Shop Ads Banner */}
+        <ShopAdsBanner shopId={shop.id} />
+
         {/* Listings Tabs */}
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="w-full max-w-lg mb-6">
@@ -383,5 +386,49 @@ export default function ShopDetail() {
         </Tabs>
       </div>
     </Layout>
+  );
+}
+
+function ShopAdsBanner({ shopId }: { shopId: string }) {
+  const [ads, setAds] = useState<Array<{ id: string; title: string; description: string | null; image_url: string | null; link_url: string | null }>>([]);
+
+  useEffect(() => {
+    supabase
+      .from("shop_ads")
+      .select("id, title, description, image_url, link_url")
+      .eq("shop_id", shopId)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(5)
+      .then(({ data }) => { if (data) setAds(data); });
+  }, [shopId]);
+
+  if (ads.length === 0) return null;
+
+  return (
+    <div className="mb-6 space-y-3">
+      {ads.map((ad) => (
+        <a
+          key={ad.id}
+          href={ad.link_url || "#"}
+          target={ad.link_url ? "_blank" : undefined}
+          rel="noopener noreferrer"
+          className="block rounded-xl overflow-hidden border hover:shadow-md transition-shadow"
+        >
+          {ad.image_url && (
+            <img src={ad.image_url} alt={ad.title} className="w-full h-32 md:h-48 object-cover" />
+          )}
+          <div className="p-3">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="text-xs">Sponsored</Badge>
+              <p className="font-medium text-sm">{ad.title}</p>
+            </div>
+            {ad.description && (
+              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{ad.description}</p>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
   );
 }
