@@ -329,6 +329,13 @@
 }
 
 @layer utilities {
+  /* RGB gradient animation for story images */
+  @keyframes rgbShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
   /* Glass Effect */
   .glass {
     @apply bg-white/80 backdrop-blur-lg;
