@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { SponsorRequestsManager } from "@/components/admin/SponsorRequestsManager";
 import { ShopRequestsManager } from "@/components/admin/ShopRequestsManager";
 import { ShopPromotionsManager } from "@/components/admin/ShopPromotionsManager";
+import { FeaturedRequestsManager } from "@/components/admin/FeaturedRequestsManager";
 import { AdminCreateShop } from "@/components/admin/AdminCreateShop";
 
 interface Listing {
@@ -158,6 +159,7 @@ export default function Admin() {
             <TabsList className="flex-wrap h-auto">
               <TabsTrigger value="listings">Listings</TabsTrigger>
               <TabsTrigger value="sponsors">Sponsors</TabsTrigger>
+              <TabsTrigger value="featured">Featured</TabsTrigger>
               <TabsTrigger value="shop-requests"><Store className="h-4 w-4 mr-1" />Shop Requests</TabsTrigger>
               <TabsTrigger value="shop-promos"><Crown className="h-4 w-4 mr-1" />Shop Promos</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
@@ -216,6 +218,7 @@ export default function Admin() {
             )}
 
             {activeTab === "sponsors" && <SponsorRequestsManager />}
+            {activeTab === "featured" && <FeaturedRequestsManager />}
             {activeTab === "shop-requests" && <ShopRequestsManager />}
             {activeTab === "shop-promos" && <ShopPromotionsManager />}
 

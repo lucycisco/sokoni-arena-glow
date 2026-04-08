@@ -14,16 +14,950 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json | null
+          new_data: Json | null
+          old_data: Json | null
+          user_email: string | null
+          user_id: string | null
+          user_ip: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          new_data?: Json | null
+          old_data?: Json | null
+          user_email?: string | null
+          user_id?: string | null
+          user_ip?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          new_data?: Json | null
+          old_data?: Json | null
+          user_email?: string | null
+          user_id?: string | null
+          user_ip?: string | null
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          buyer_id: string
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          listing_id: string | null
+          seller_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          listing_id?: string | null
+          seller_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          listing_id?: string | null
+          seller_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fun_circle_comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          story_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          story_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          story_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fun_circle_comments_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "fun_circle_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fun_circle_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          participant_one: string
+          participant_two: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          participant_one: string
+          participant_two: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          participant_one?: string
+          participant_two?: string
+        }
+        Relationships: []
+      }
+      fun_circle_friends: {
+        Row: {
+          addressee_id: string
+          created_at: string | null
+          id: string
+          requester_id: string
+          status: Database["public"]["Enums"]["friend_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          addressee_id: string
+          created_at?: string | null
+          id?: string
+          requester_id: string
+          status?: Database["public"]["Enums"]["friend_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          addressee_id?: string
+          created_at?: string | null
+          id?: string
+          requester_id?: string
+          status?: Database["public"]["Enums"]["friend_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      fun_circle_mentions: {
+        Row: {
+          created_at: string | null
+          id: string
+          mentioned_user_id: string
+          story_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          mentioned_user_id: string
+          story_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          mentioned_user_id?: string
+          story_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fun_circle_mentions_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "fun_circle_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fun_circle_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fun_circle_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "fun_circle_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fun_circle_stories: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          expires_at: string
+          id: string
+          images: Json | null
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          images?: Json | null
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          images?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      fun_circle_story_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          reaction_type: string
+          story_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reaction_type?: string
+          story_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reaction_type?: string
+          story_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fun_circle_story_reactions_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "fun_circle_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          delivery_available: boolean | null
+          description: string | null
+          event_date: string | null
+          event_end_date: string | null
+          expires_at: string | null
+          favorites_count: number | null
+          id: string
+          images: Json | null
+          is_featured: boolean | null
+          is_free: boolean | null
+          is_negotiable: boolean | null
+          is_sponsored: boolean | null
+          latitude: number | null
+          listing_type: Database["public"]["Enums"]["listing_type"] | null
+          location: string | null
+          longitude: number | null
+          original_price: number | null
+          price: number | null
+          shop_id: string | null
+          sponsored_until: string | null
+          status: Database["public"]["Enums"]["listing_status"] | null
+          subcategory: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+          views_count: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          delivery_available?: boolean | null
+          description?: string | null
+          event_date?: string | null
+          event_end_date?: string | null
+          expires_at?: string | null
+          favorites_count?: number | null
+          id?: string
+          images?: Json | null
+          is_featured?: boolean | null
+          is_free?: boolean | null
+          is_negotiable?: boolean | null
+          is_sponsored?: boolean | null
+          latitude?: number | null
+          listing_type?: Database["public"]["Enums"]["listing_type"] | null
+          location?: string | null
+          longitude?: number | null
+          original_price?: number | null
+          price?: number | null
+          shop_id?: string | null
+          sponsored_until?: string | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          subcategory?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+          views_count?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          delivery_available?: boolean | null
+          description?: string | null
+          event_date?: string | null
+          event_end_date?: string | null
+          expires_at?: string | null
+          favorites_count?: number | null
+          id?: string
+          images?: Json | null
+          is_featured?: boolean | null
+          is_free?: boolean | null
+          is_negotiable?: boolean | null
+          is_sponsored?: boolean | null
+          latitude?: number | null
+          listing_type?: Database["public"]["Enums"]["listing_type"] | null
+          location?: string | null
+          longitude?: number | null
+          original_price?: number | null
+          price?: number | null
+          shop_id?: string | null
+          sponsored_until?: string | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          subcategory?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string | null
+          metadata: Json | null
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          read?: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          is_verified: boolean | null
+          location: string | null
+          phone: string | null
+          updated_at: string | null
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_verified?: boolean | null
+          location?: string | null
+          phone?: string | null
+          updated_at?: string | null
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_verified?: boolean | null
+          location?: string | null
+          phone?: string | null
+          updated_at?: string | null
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      shop_followers: {
+        Row: {
+          created_at: string | null
+          id: string
+          shop_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          shop_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          shop_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_followers_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_promotion_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          duration_days: number | null
+          id: string
+          requested_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          shop_id: string
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          duration_days?: number | null
+          id?: string
+          requested_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          shop_id: string
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          duration_days?: number | null
+          id?: string
+          requested_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          shop_id?: string
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_promotion_requests_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          id: string
+          rating: number
+          shop_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating: number
+          shop_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number
+          shop_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_reviews_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shops: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          email: string | null
+          followers_count: number | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          location: string | null
+          logo_url: string | null
+          name: string
+          phone: string | null
+          rating: number | null
+          slug: string | null
+          theme: string | null
+          updated_at: string | null
+          user_id: string
+          views_count: number | null
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          followers_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          location?: string | null
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          rating?: number | null
+          slug?: string | null
+          theme?: string | null
+          updated_at?: string | null
+          user_id: string
+          views_count?: number | null
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          followers_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          location?: string | null
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          rating?: number | null
+          slug?: string | null
+          theme?: string | null
+          updated_at?: string | null
+          user_id?: string
+          views_count?: number | null
+        }
+        Relationships: []
+      }
+      sponsor_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          duration_days: number | null
+          id: string
+          listing_id: string
+          requested_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          duration_days?: number | null
+          id?: string
+          listing_id: string
+          requested_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          duration_days?: number | null
+          id?: string
+          listing_id?: string
+          requested_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsor_requests_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsor_requests_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      listings_public: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          delivery_available: boolean | null
+          description: string | null
+          event_date: string | null
+          event_end_date: string | null
+          expires_at: string | null
+          favorites_count: number | null
+          id: string | null
+          images: Json | null
+          is_featured: boolean | null
+          is_free: boolean | null
+          is_negotiable: boolean | null
+          is_sponsored: boolean | null
+          latitude: number | null
+          listing_type: Database["public"]["Enums"]["listing_type"] | null
+          location: string | null
+          longitude: number | null
+          original_price: number | null
+          price: number | null
+          shop_id: string | null
+          sponsored_until: string | null
+          status: Database["public"]["Enums"]["listing_status"] | null
+          subcategory: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+          views_count: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          delivery_available?: boolean | null
+          description?: string | null
+          event_date?: string | null
+          event_end_date?: string | null
+          expires_at?: string | null
+          favorites_count?: number | null
+          id?: string | null
+          images?: Json | null
+          is_featured?: boolean | null
+          is_free?: boolean | null
+          is_negotiable?: boolean | null
+          is_sponsored?: boolean | null
+          latitude?: number | null
+          listing_type?: Database["public"]["Enums"]["listing_type"] | null
+          location?: string | null
+          longitude?: number | null
+          original_price?: number | null
+          price?: number | null
+          shop_id?: string | null
+          sponsored_until?: string | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          subcategory?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          delivery_available?: boolean | null
+          description?: string | null
+          event_date?: string | null
+          event_end_date?: string | null
+          expires_at?: string | null
+          favorites_count?: number | null
+          id?: string | null
+          images?: Json | null
+          is_featured?: boolean | null
+          is_free?: boolean | null
+          is_negotiable?: boolean | null
+          is_sponsored?: boolean | null
+          latitude?: number | null
+          listing_type?: Database["public"]["Enums"]["listing_type"] | null
+          location?: string | null
+          longitude?: number | null
+          original_price?: number | null
+          price?: number | null
+          shop_id?: string | null
+          sponsored_until?: string | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          subcategory?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          is_verified: boolean | null
+          location: string | null
+          user_id: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          is_verified?: boolean | null
+          location?: string | null
+          user_id?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          is_verified?: boolean | null
+          location?: string | null
+          user_id?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      are_friends: {
+        Args: { _user_one: string; _user_two: string }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      friend_status: "pending" | "accepted" | "rejected"
+      listing_status: "available" | "sold" | "draft" | "expired"
+      listing_type: "product" | "service" | "event"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +1084,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      friend_status: ["pending", "accepted", "rejected"],
+      listing_status: ["available", "sold", "draft", "expired"],
+      listing_type: ["product", "service", "event"],
+    },
   },
 } as const

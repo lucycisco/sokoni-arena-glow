@@ -69,7 +69,7 @@ export function CreateShopForm({ onSuccess, onCancel }: CreateShopFormProps) {
     }
 
     setIsSubmitting(true);
-    const { error } = await (supabase.from("shop_creation_requests" as any) as any).insert({
+    const { error } = await supabase.from("shop_creation_requests").insert({
       user_id: user.id,
       shop_name: form.name.trim(),
       shop_slug: form.slug.trim(),
