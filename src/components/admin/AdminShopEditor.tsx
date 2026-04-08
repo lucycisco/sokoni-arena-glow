@@ -10,7 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Store, Edit, Loader2, Search, CheckCircle, XCircle } from "lucide-react";
+import { CloudinaryImageUpload } from "@/components/shared/CloudinaryImageUpload";
+import { Store, Edit, Loader2, Search, CheckCircle, XCircle, UserCog } from "lucide-react";
 import { format } from "date-fns";
 import type { Shop } from "@/hooks/useShops";
 
@@ -28,6 +29,8 @@ export function AdminShopEditor() {
   const [isSaving, setIsSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState<Record<string, string>>({});
+  const [ownerEmail, setOwnerEmail] = useState("");
+  const [isTransferring, setIsTransferring] = useState(false);
 
   const fetchShops = async () => {
     setIsLoading(true);
@@ -41,7 +44,7 @@ export function AdminShopEditor() {
 
   useEffect(() => { fetchShops(); }, []);
 
-  const openEditor = (shop: Shop) => {
+  const openEditor = async (shop: Shop) => {
     setEditingShop(shop);
     setForm({
       name: shop.name || "",
@@ -62,6 +65,44 @@ export function AdminShopEditor() {
       logo_url: shop.logo_url || "",
       cover_image_url: shop.cover_image_url || "",
     });
+    // Fetch current owner email
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("user_id", shop.user_id)
+      .maybeSingle();
+    setOwnerEmail(profile?.email || "");
+  };
+
+  const handleTransferOwnership = async () => {
+    if (!editingShop || !ownerEmail.trim()) return;
+    setIsTransferring(true);
+
+    // Find user by email
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("user_id")
+      .eq("email", ownerEmail.trim())
+      .maybeSingle();
+
+    if (!profile) {
+      toast({ title: "User not found", description: "No user with that email exists", variant: "destructive" });
+      setIsTransferring(false);
+      return;
+    }
+
+    const { error } = await supabase
+      .from("shops")
+      .update({ user_id: profile.user_id })
+      .eq("id", editingShop.id);
+
+    if (error) {
+      toast({ title: "Transfer failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Ownership transferred ✅" });
+      fetchShops();
+    }
+    setIsTransferring(false);
   };
 
   const handleSave = async () => {
@@ -139,7 +180,7 @@ export function AdminShopEditor() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Store className="h-5 w-5" />All Shops</CardTitle>
-          <CardDescription>Full control over all shops — edit details, contacts, socials, and status</CardDescription>
+          <CardDescription>Full control over all shops — edit details, contacts, images, ownership, and status</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="relative mb-4">
@@ -162,6 +203,9 @@ export function AdminShopEditor() {
                 <TableRow key={shop.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
+                      {shop.logo_url && (
+                        <img src={shop.logo_url} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      )}
                       {shop.name}
                       {shop.is_verified && <CheckCircle className="h-4 w-4 text-primary" />}
                     </div>
@@ -199,6 +243,33 @@ export function AdminShopEditor() {
             <DialogTitle>Edit Shop: {editingShop?.name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Ownership Transfer */}
+            <div className="border rounded-lg p-4 bg-muted/30">
+              <div className="flex items-center gap-2 mb-3">
+                <UserCog className="h-5 w-5 text-primary" />
+                <p className="font-medium">Shop Ownership</p>
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  value={ownerEmail}
+                  onChange={(e) => setOwnerEmail(e.target.value)}
+                  placeholder="Owner email address"
+                  className="flex-1"
+                />
+                <Button
+                  variant="outline"
+                  onClick={handleTransferOwnership}
+                  disabled={isTransferring}
+                >
+                  {isTransferring && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
+                  Transfer
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Change the owner by entering the new owner's email address
+              </p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div><Label>Shop Name</Label><Input value={form.name} onChange={(e) => updateField("name", e.target.value)} /></div>
               <div><Label>Slug</Label><Input value={form.slug} onChange={(e) => updateField("slug", e.target.value)} /></div>
@@ -230,10 +301,26 @@ export function AdminShopEditor() {
               </div>
             </div>
             <div className="border-t pt-4">
-              <p className="text-sm font-medium mb-3">Images</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Logo URL</Label><Input value={form.logo_url} onChange={(e) => updateField("logo_url", e.target.value)} /></div>
-                <div><Label>Cover Image URL</Label><Input value={form.cover_image_url} onChange={(e) => updateField("cover_image_url", e.target.value)} /></div>
+              <p className="text-sm font-medium mb-3">Images (upload directly)</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="mb-2 block">Shop Logo</Label>
+                  <CloudinaryImageUpload
+                    value={form.logo_url}
+                    onChange={(url) => updateField("logo_url", url)}
+                    label="Upload Logo"
+                    aspectRatio="aspect-square"
+                  />
+                </div>
+                <div>
+                  <Label className="mb-2 block">Cover Image</Label>
+                  <CloudinaryImageUpload
+                    value={form.cover_image_url}
+                    onChange={(url) => updateField("cover_image_url", url)}
+                    label="Upload Cover"
+                    aspectRatio="aspect-video"
+                  />
+                </div>
               </div>
             </div>
             <div className="flex justify-end gap-3 pt-2">

@@ -14,10 +14,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle, Users, Sparkles, LogIn, Bell, X } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  MessageCircle, Users, Sparkles, LogIn, Bell, X, Home,
+  Compass, UserPlus, Settings, TrendingUp, Search
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
-// Memoized story skeletons for faster perceived loading
 const StorySkeleton = memo(function StorySkeleton() {
   return (
     <div className="bg-card rounded-xl p-4 space-y-3">
@@ -48,16 +53,17 @@ const StorySkeletons = memo(function StorySkeletons() {
 function FunCircleContent() {
   const { user } = useAuth();
   const { stories, isLoading, addReaction, deleteStory } = useFunCircleStories();
-  const { 
-    startConversation, 
-    conversations, 
+  const {
+    startConversation,
+    conversations,
     openConversation,
-    currentConversation 
+    currentConversation
   } = useFunCircleMessages();
   const [showMessages, setShowMessages] = useState(false);
   const [showMobileFriends, setShowMobileFriends] = useState(false);
+  const [feedTab, setFeedTab] = useState("feed");
 
-  const unreadCount = useMemo(() => 
+  const unreadCount = useMemo(() =>
     conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0),
     [conversations]
   );
@@ -66,11 +72,8 @@ function FunCircleContent() {
     const conv = await startConversation(userId);
     if (conv) {
       const fullConv = conversations.find(c => c.id === conv.id);
-      if (fullConv) {
-        await openConversation(fullConv);
-      } else {
-        await openConversation(conv);
-      }
+      if (fullConv) await openConversation(fullConv);
+      else await openConversation(conv);
       setShowMessages(true);
     }
   }, [startConversation, conversations, openConversation]);
@@ -97,10 +100,7 @@ function FunCircleContent() {
             </p>
             <div className="flex gap-3 justify-center">
               <Button asChild>
-                <Link to="/login">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Sign In
-                </Link>
+                <Link to="/login"><LogIn className="h-4 w-4 mr-2" />Sign In</Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link to="/register">Create Account</Link>
@@ -114,155 +114,258 @@ function FunCircleContent() {
 
   return (
     <Layout>
-      <div className="container py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-              <Sparkles className="h-6 w-6 text-primary-foreground" />
+      {/* Top Navigation Bar - Social style */}
+      <div className="sticky top-0 z-30 bg-card border-b shadow-sm">
+        <div className="container">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <h1 className="text-lg font-bold hidden sm:block">Fun Circle</h1>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold">Sokoni Fun Circle</h1>
-              <p className="text-sm text-muted-foreground">
-                Share stories with friends • Stories disappear in 24 hours
-              </p>
+
+            {/* Center Nav */}
+            <div className="flex items-center gap-1">
+              <Button
+                variant={feedTab === "feed" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setFeedTab("feed")}
+                className="gap-1.5"
+              >
+                <Home className="h-4 w-4" />
+                <span className="hidden sm:inline">Feed</span>
+              </Button>
+              <Button
+                variant={feedTab === "discover" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setFeedTab("discover")}
+                className="gap-1.5"
+              >
+                <Compass className="h-4 w-4" />
+                <span className="hidden sm:inline">Discover</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowMobileFriends(true)}
+                className="lg:hidden gap-1.5"
+              >
+                <Users className="h-4 w-4" />
+              </Button>
             </div>
-          </div>
-          <div className="flex gap-2 flex-wrap items-center">
-            <FunCircleSettingsSheet />
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-            >
-              <Link to="/fun-circle/notifications">
-                <Bell className="h-4 w-4 mr-2" />
-                Notifications
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="relative"
-              onClick={() => setShowMessages(true)}
-            >
-              <MessageCircle className="h-4 w-4 mr-2" />
-              Messages
-              {unreadCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 min-w-5 p-0 flex items-center justify-center text-xs">
-                  {unreadCount}
-                </Badge>
-              )}
-            </Button>
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-1">
+              <FunCircleSettingsSheet />
+              <Button variant="ghost" size="icon" asChild className="relative">
+                <Link to="/fun-circle/notifications">
+                  <Bell className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative"
+                onClick={() => setShowMessages(true)}
+              >
+                <MessageCircle className="h-4 w-4" />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-4 min-w-4 p-0 flex items-center justify-center text-[10px]">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-          {/* Main Feed */}
-          <div className="space-y-6">
-            {/* Profile Header with Avatar Update */}
+      <div className="container py-4">
+        <div className="grid lg:grid-cols-[280px_1fr_300px] gap-6">
+          {/* Left Sidebar - Profile & Quick Links */}
+          <div className="hidden lg:block space-y-4">
             <ProfileHeader />
-            
+
+            <Card className="p-3">
+              <nav className="space-y-1">
+                <SidebarLink icon={Home} label="News Feed" active={feedTab === "feed"} onClick={() => setFeedTab("feed")} />
+                <SidebarLink icon={Users} label="Friends" onClick={() => setShowMobileFriends(true)} />
+                <SidebarLink icon={MessageCircle} label="Messages" badge={unreadCount} onClick={() => setShowMessages(true)} />
+                <SidebarLink icon={Compass} label="Discover" active={feedTab === "discover"} onClick={() => setFeedTab("discover")} />
+                <SidebarLink icon={Bell} label="Notifications" href="/fun-circle/notifications" />
+              </nav>
+            </Card>
+
+            <Card className="p-3">
+              <p className="text-xs text-muted-foreground px-2 mb-2 font-medium">Quick Stats</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-center p-2 rounded-lg bg-muted/50">
+                  <p className="text-lg font-bold text-primary">{stories.length}</p>
+                  <p className="text-xs text-muted-foreground">Stories</p>
+                </div>
+                <div className="text-center p-2 rounded-lg bg-muted/50">
+                  <p className="text-lg font-bold text-primary">{conversations.length}</p>
+                  <p className="text-xs text-muted-foreground">Chats</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Main Feed */}
+          <div className="space-y-4 min-w-0">
+            {/* Mobile Profile Header */}
+            <div className="lg:hidden">
+              <ProfileHeader />
+            </div>
+
             {/* Create Story */}
             <CreateStoryForm />
 
             {/* Stories Feed */}
-            {isLoading ? (
-              <StorySkeletons />
-            ) : stories.length === 0 ? (
-              <div className="text-center py-12 bg-muted/30 rounded-xl">
-                <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
-                <h3 className="text-lg font-medium mb-2">No stories yet</h3>
-                <p className="text-muted-foreground max-w-sm mx-auto">
-                  Add friends to see their stories, or be the first to share something!
+            {feedTab === "feed" && (
+              <>
+                {isLoading ? (
+                  <StorySkeletons />
+                ) : stories.length === 0 ? (
+                  <Card className="p-12 text-center">
+                    <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
+                    <h3 className="text-lg font-medium mb-2">No stories yet</h3>
+                    <p className="text-muted-foreground max-w-sm mx-auto">
+                      Add friends to see their stories, or be the first to share something!
+                    </p>
+                  </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {stories.map((story) => (
+                      <StoryCard
+                        key={story.id}
+                        story={story}
+                        onReact={handleReact}
+                        onDelete={handleDelete}
+                        onStartChat={handleStartChat}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {feedTab === "discover" && (
+              <Card className="p-8 text-center">
+                <Compass className="h-12 w-12 mx-auto mb-3 text-primary/50" />
+                <h3 className="font-semibold mb-1">Discover People & Stories</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Find new friends and explore trending stories from the community
                 </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {stories.map((story) => (
-                  <StoryCard
-                    key={story.id}
-                    story={story}
-                    onReact={handleReact}
-                    onDelete={handleDelete}
-                    onStartChat={handleStartChat}
-                  />
-                ))}
-              </div>
+                <Button variant="outline" onClick={() => setShowMobileFriends(true)}>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Find Friends
+                </Button>
+              </Card>
             )}
           </div>
 
-          {/* Sidebar */}
-          <div className="hidden lg:block space-y-6">
+          {/* Right Sidebar */}
+          <div className="hidden lg:block space-y-4">
             <FriendsPanel onStartChat={handleStartChat} />
           </div>
         </div>
-
-        {/* Desktop Messages Drawer */}
-        {showMessages && (
-          <div className="hidden lg:block fixed inset-y-0 right-0 w-[380px] z-50 shadow-xl bg-background border-l">
-            <MessagesDrawer
-              isOpen={showMessages}
-              onClose={() => setShowMessages(false)}
-            />
-            <button
-              className="absolute top-4 left-4 p-2 rounded-full bg-background shadow hover:bg-accent"
-              onClick={() => setShowMessages(false)}
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        )}
-
-        {/* Mobile Friends & Messages */}
-        <div className="lg:hidden fixed bottom-20 right-4 flex flex-col gap-2 z-40">
-          <Button
-            size="icon"
-            variant="secondary"
-            className="h-12 w-12 rounded-full shadow-lg"
-            onClick={() => setShowMobileFriends(true)}
-          >
-            <Users className="h-5 w-5" />
-          </Button>
-          <Button
-            size="icon"
-            className="h-12 w-12 rounded-full shadow-lg relative"
-            onClick={() => setShowMessages(true)}
-          >
-            <MessageCircle className="h-5 w-5" />
-            {unreadCount > 0 && (
-              <Badge className="absolute -top-1 -right-1 h-5 min-w-5 p-0 flex items-center justify-center text-xs">
-                {unreadCount}
-              </Badge>
-            )}
-          </Button>
-        </div>
-
-        {/* Mobile Friends Sheet */}
-        <MobileFriendsSheet
-          isOpen={showMobileFriends}
-          onClose={() => setShowMobileFriends(false)}
-          onStartChat={(userId) => {
-            setShowMobileFriends(false);
-            handleStartChat(userId);
-          }}
-        />
-
-        {/* Mobile Messages Drawer */}
-        {showMessages && (
-          <div className="lg:hidden fixed inset-0 z-50 bg-background">
-            <MessagesDrawer isOpen={showMessages} onClose={() => setShowMessages(false)} />
-            <button
-              className="absolute top-4 right-4 p-2 hover:bg-accent rounded-lg"
-              onClick={() => setShowMessages(false)}
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Desktop Messages Drawer */}
+      {showMessages && (
+        <div className="hidden lg:block fixed inset-y-0 right-0 w-[380px] z-50 shadow-xl bg-background border-l">
+          <MessagesDrawer isOpen={showMessages} onClose={() => setShowMessages(false)} />
+          <button
+            className="absolute top-4 left-4 p-2 rounded-full bg-background shadow hover:bg-accent"
+            onClick={() => setShowMessages(false)}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Mobile FABs */}
+      <div className="lg:hidden fixed bottom-20 right-4 flex flex-col gap-2 z-40">
+        <Button
+          size="icon"
+          className="h-12 w-12 rounded-full shadow-lg relative"
+          onClick={() => setShowMessages(true)}
+        >
+          <MessageCircle className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <Badge className="absolute -top-1 -right-1 h-5 min-w-5 p-0 flex items-center justify-center text-xs">
+              {unreadCount}
+            </Badge>
+          )}
+        </Button>
+      </div>
+
+      {/* Mobile Friends Sheet */}
+      <MobileFriendsSheet
+        isOpen={showMobileFriends}
+        onClose={() => setShowMobileFriends(false)}
+        onStartChat={(userId) => {
+          setShowMobileFriends(false);
+          handleStartChat(userId);
+        }}
+      />
+
+      {/* Mobile Messages Drawer */}
+      {showMessages && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-background">
+          <MessagesDrawer isOpen={showMessages} onClose={() => setShowMessages(false)} />
+          <button
+            className="absolute top-4 right-4 p-2 hover:bg-accent rounded-lg"
+            onClick={() => setShowMessages(false)}
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      )}
     </Layout>
   );
+}
+
+function SidebarLink({
+  icon: Icon,
+  label,
+  active,
+  badge,
+  onClick,
+  href,
+}: {
+  icon: any;
+  label: string;
+  active?: boolean;
+  badge?: number;
+  onClick?: () => void;
+  href?: string;
+}) {
+  const className = `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors w-full text-left ${
+    active
+      ? "bg-primary/10 text-primary"
+      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+  }`;
+
+  const content = (
+    <>
+      <Icon className="h-4 w-4 shrink-0" />
+      <span className="flex-1">{label}</span>
+      {badge && badge > 0 && (
+        <Badge variant="default" className="h-5 min-w-5 p-0 flex items-center justify-center text-xs">
+          {badge}
+        </Badge>
+      )}
+    </>
+  );
+
+  if (href) {
+    return <Link to={href} className={className}>{content}</Link>;
+  }
+
+  return <button onClick={onClick} className={className}>{content}</button>;
 }
 
 export default function FunCircle() {
