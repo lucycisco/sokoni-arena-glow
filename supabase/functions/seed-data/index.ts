@@ -29,7 +29,7 @@ serve(async (req) => {
         await sql.unsafe(data.sql);
         results.push("migration applied successfully");
       } catch (e) {
-        results.push(`migration error: ${e.message}`);
+        results.push(`migration error: ${(e as Error).message}`);
       } finally {
         await sql.end();
       }
