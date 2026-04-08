@@ -138,7 +138,7 @@ export default function Events() {
                 id={listing.id}
                 title={listing.title}
                 price={listing.price || undefined}
-                image={listing.images?.[0] || "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=500&q=80"}
+                image={parseImages(listing.images)?.[0] || "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=500&q=80"}
                 location={listing.location}
                 category="event"
                 isSponsored={listing.is_sponsored || false}

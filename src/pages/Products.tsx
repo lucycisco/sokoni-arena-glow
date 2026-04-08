@@ -149,7 +149,7 @@ export default function Products() {
                 title={listing.title}
                 price={listing.price || undefined}
                 originalPrice={listing.original_price || undefined}
-                image={listing.images?.[0] || "https://images.unsplash.com/photo-1560472355-536de3962603?w=500&q=80"}
+                image={parseImages(listing.images)?.[0] || "https://images.unsplash.com/photo-1560472355-536de3962603?w=500&q=80"}
                 location={listing.location}
                 category="product"
                 isSponsored={listing.is_sponsored || false}
