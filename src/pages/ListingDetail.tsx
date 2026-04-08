@@ -92,7 +92,13 @@ export default function ListingDetail() {
       return;
     }
 
-    setListing(data);
+    // Parse images if it's a JSON string
+    const parsed = { ...data };
+    if (typeof parsed.images === "string") {
+      try { parsed.images = JSON.parse(parsed.images); } catch { parsed.images = []; }
+    }
+    if (!Array.isArray(parsed.images)) parsed.images = [];
+    setListing(parsed);
     
     // Fetch seller profile (use public view, phone is accessible via view)
     const { data: profile } = await supabase
