@@ -10,7 +10,6 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
 
 // Rotating colors/fonts for the NEW badge - changes every hour
 const badgeStyles = [
