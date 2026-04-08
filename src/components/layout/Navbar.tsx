@@ -209,13 +209,14 @@ export function Navbar() {
                   {navLinks.map((link) => {
                     const Icon = link.icon;
                     const isActive = location.pathname === link.href;
+                    const isShops = link.href === "/shops";
                     return (
                       <Link
                         key={link.href}
                         to={link.href}
                         onClick={() => setIsOpen(false)}
                         className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-colors",
+                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-colors relative",
                           isActive
                             ? "bg-primary text-primary-foreground"
                             : "hover:bg-muted"
@@ -223,6 +224,7 @@ export function Navbar() {
                       >
                         <Icon className="h-5 w-5" />
                         {link.label}
+                        {isShops && <NewFeatureBadge />}
                       </Link>
                     );
                   })}
