@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
-import { Facebook, Mail, MapPin } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Mail, MapPin, Phone } from "lucide-react";
+import { FaTiktok, FaWhatsapp, FaLinkedin } from "react-icons/fa";
 
 const footerLinks = {
   marketplace: [
     { label: "Products", href: "/products" },
     { label: "Services", href: "/services" },
     { label: "Events", href: "/events" },
+    { label: "Shops", href: "/shops" },
     { label: "Fun Circle", href: "/fun-circle" },
   ],
   account: [
@@ -22,6 +24,12 @@ const footerLinks = {
 
 const socialLinks = [
   { icon: Facebook, href: "https://facebook.com/groups/824226770472011/", label: "Facebook" },
+  { icon: Twitter, href: "https://x.com/sokoniarena", label: "X (Twitter)" },
+  { icon: Instagram, href: "https://instagram.com/sokoniarena", label: "Instagram" },
+  { icon: FaTiktok, href: "https://tiktok.com/@sokoniarena", label: "TikTok" },
+  { icon: Youtube, href: "https://youtube.com/@sokoniarena", label: "YouTube" },
+  { icon: FaWhatsapp, href: "https://wa.me/254700000000", label: "WhatsApp" },
+  { icon: FaLinkedin, href: "https://linkedin.com/company/sokoniarena", label: "LinkedIn" },
 ];
 
 export function Footer() {

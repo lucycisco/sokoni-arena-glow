@@ -110,16 +110,27 @@ export default function ListingDetail() {
     
     setSeller(profile);
 
-    // Fetch related listings
-    const { data: related } = await supabase
+    // Fetch related listings by same category (not same seller)
+    let relatedQuery = supabase
       .from("listings_public")
       .select("*")
       .eq("listing_type", data.listing_type)
       .neq("id", data.id)
-      .eq("status", "available")
-      .limit(4);
+      .eq("status", "available");
+    
+    if (data.category) {
+      relatedQuery = relatedQuery.eq("category", data.category);
+    }
 
-    setRelatedListings(related || []);
+    const { data: related } = await relatedQuery.limit(4);
+
+    // Parse images for related listings
+    const parsedRelated = (related || []).map((item: any) => ({
+      ...item,
+      images: parseImages(item.images),
+    }));
+
+    setRelatedListings(parsedRelated);
     setIsLoading(false);
   };
 

@@ -49,17 +49,19 @@ export function Navbar() {
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = location.pathname === link.href;
+            const isShops = link.href === "/shops";
             return (
               <Link
                 key={link.href}
                 to={link.href}
                 className={cn(
-                  "nav-link flex items-center gap-2",
+                  "nav-link flex items-center gap-2 relative",
                   isActive && "active"
                 )}
               >
                 <Icon className="h-4 w-4" />
                 {link.label}
+                {isShops && <NewFeatureBadge />}
               </Link>
             );
           })}
