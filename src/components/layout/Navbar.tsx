@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -10,6 +10,39 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { Badge } from "@/components/ui/badge";
+
+// Rotating colors/fonts for the NEW badge - changes every hour
+const badgeStyles = [
+  { bg: "bg-gradient-to-r from-yellow-400 to-amber-500", text: "text-amber-950", font: "font-bold" },
+  { bg: "bg-gradient-to-r from-emerald-400 to-green-500", text: "text-green-950", font: "font-black" },
+  { bg: "bg-gradient-to-r from-pink-400 to-rose-500", text: "text-rose-950", font: "font-extrabold" },
+  { bg: "bg-gradient-to-r from-violet-400 to-purple-500", text: "text-purple-950", font: "font-bold italic" },
+  { bg: "bg-gradient-to-r from-cyan-400 to-blue-500", text: "text-blue-950", font: "font-black" },
+  { bg: "bg-gradient-to-r from-orange-400 to-red-500", text: "text-red-950", font: "font-extrabold" },
+];
+
+function NewFeatureBadge() {
+  const [styleIndex, setStyleIndex] = useState(() => Math.floor(Date.now() / 3600000) % badgeStyles.length);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStyleIndex(Math.floor(Date.now() / 3600000) % badgeStyles.length);
+    }, 60000); // check every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  const style = badgeStyles[styleIndex];
+
+  return (
+    <span className={cn(
+      "absolute -top-3 -right-3 px-1.5 py-0.5 text-[9px] rounded-full shadow-lg animate-bounce",
+      style.bg, style.text, style.font,
+      "ring-2 ring-background"
+    )}>
+      NEW✨
+    </span>
+  );
+}
 
 const navLinks = [
   { href: "/products", label: "Products", icon: ShoppingBag },
@@ -49,17 +82,19 @@ export function Navbar() {
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = location.pathname === link.href;
+            const isShops = link.href === "/shops";
             return (
               <Link
                 key={link.href}
                 to={link.href}
                 className={cn(
-                  "nav-link flex items-center gap-2",
+                  "nav-link flex items-center gap-2 relative",
                   isActive && "active"
                 )}
               >
                 <Icon className="h-4 w-4" />
                 {link.label}
+                {isShops && <NewFeatureBadge />}
               </Link>
             );
           })}
@@ -173,13 +208,14 @@ export function Navbar() {
                   {navLinks.map((link) => {
                     const Icon = link.icon;
                     const isActive = location.pathname === link.href;
+                    const isShops = link.href === "/shops";
                     return (
                       <Link
                         key={link.href}
                         to={link.href}
                         onClick={() => setIsOpen(false)}
                         className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-colors",
+                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-colors relative",
                           isActive
                             ? "bg-primary text-primary-foreground"
                             : "hover:bg-muted"
@@ -187,6 +223,7 @@ export function Navbar() {
                       >
                         <Icon className="h-5 w-5" />
                         {link.label}
+                        {isShops && <NewFeatureBadge />}
                       </Link>
                     );
                   })}
