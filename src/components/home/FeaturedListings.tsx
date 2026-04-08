@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { parseImages } from "@/lib/utils";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ListingCard } from "@/components/listings/ListingCard";
@@ -73,7 +74,7 @@ export const FeaturedListings = memo(function FeaturedListings() {
     title: listing.title,
     price: listing.price,
     originalPrice: listing.original_price,
-    image: listing.images?.[0] || "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=500&q=80",
+    image: parseImages(listing.images)?.[0] || "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=500&q=80",
     location: listing.location,
     category: listing.listing_type as "product" | "service" | "event",
     isSponsored: listing.is_sponsored,

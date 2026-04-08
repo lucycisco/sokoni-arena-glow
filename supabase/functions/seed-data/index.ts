@@ -29,7 +29,7 @@ serve(async (req) => {
         await sql.unsafe(data.sql);
         results.push("migration applied successfully");
       } catch (e) {
-        results.push(`migration error: ${e.message}`);
+        results.push(`migration error: ${(e as Error).message}`);
       } finally {
         await sql.end();
       }
@@ -109,6 +109,6 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ error: "Unknown action" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });

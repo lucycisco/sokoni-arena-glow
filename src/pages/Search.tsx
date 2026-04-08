@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { parseImages } from "@/lib/utils";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ListingCard } from "@/components/listings/ListingCard";
@@ -548,7 +549,7 @@ export default function Search() {
                   title={listing.title}
                   price={listing.price || 0}
                   originalPrice={listing.original_price || undefined}
-                  image={listing.images?.[0] || "/placeholder.svg"}
+                  image={parseImages(listing.images)?.[0] || "/placeholder.svg"}
                   location={listing.location}
                   category={listing.listing_type}
                   isSponsored={listing.is_sponsored}

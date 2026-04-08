@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { FaWhatsapp, FaFacebook, FaInstagram, FaXTwitter, FaTiktok, FaYoutube, FaLinkedin, FaTelegram } from "react-icons/fa6";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, parseImages } from "@/lib/utils";
 
 interface ShopListing {
   id: string;
@@ -139,7 +139,7 @@ export default function ShopDetail() {
     title: listing.title,
     price: listing.price ?? undefined,
     originalPrice: listing.original_price ?? undefined,
-    image: listing.images?.[0] || "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=500&q=80",
+    image: parseImages(listing.images)?.[0] || "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=500&q=80",
     location: listing.location || "",
     category: listing.listing_type as "product" | "service" | "event",
     isSponsored: listing.is_sponsored || false,

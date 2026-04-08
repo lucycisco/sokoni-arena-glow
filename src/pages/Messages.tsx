@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/untyped-client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { format, isToday, isYesterday } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, parseImages } from "@/lib/utils";
 import {
   MessageCircle,
   Send,
@@ -424,7 +424,7 @@ export default function Messages() {
                   {activeConversation.listing?.images?.[0] && (
                     <Link to={`/products/${activeConversation.listing_id}`}>
                       <img
-                        src={activeConversation.listing.images[0]}
+                        src={parseImages(activeConversation.listing.images)[0]}
                         alt=""
                         className="w-12 h-12 rounded-lg object-cover"
                       />

@@ -19,7 +19,7 @@ import { ProfileEditor } from "@/components/profile/ProfileEditor";
 import { FavoritesList } from "@/components/dashboard/FavoritesList";
 import { MyShopPanel } from "@/components/dashboard/MyShopPanel";
 import { DashboardMessages } from "@/components/dashboard/DashboardMessages";
-import { cn } from "@/lib/utils";
+import { cn, parseImages } from "@/lib/utils";
 
 interface Listing {
   id: string;
@@ -203,8 +203,8 @@ export default function Dashboard() {
                         <div key={listing.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-lg border bg-card hover:shadow-md transition-shadow">
                           <div className="flex items-center gap-4">
                             <div className="w-16 h-16 rounded-lg bg-muted overflow-hidden shrink-0">
-                              {listing.images?.[0] ? (
-                                <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
+                              {parseImages(listing.images)?.[0] ? (
+                                <img src={parseImages(listing.images)[0]} alt={listing.title} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center"><TypeIcon className="h-6 w-6 text-muted-foreground" /></div>
                               )}
