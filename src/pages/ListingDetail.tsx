@@ -7,17 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { 
-  MapPin, Calendar, Heart, Share2, Phone, Mail, 
+  MapPin, Calendar, Heart, Share2, Phone, 
   ChevronLeft, ChevronRight, Star, Package, Sparkles, 
   Clock, Truck, Tag, User, Loader2, MessageCircle
 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa6";
 import { supabase } from "@/integrations/supabase/untyped-client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useConversation } from "@/hooks/useConversation";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface Listing {
   id: string;
@@ -47,6 +47,8 @@ interface Profile {
   avatar_url: string | null;
   is_verified: boolean | null;
   created_at: string;
+  phone?: string | null;
+  whatsapp?: string | null;
 }
 
 export default function ListingDetail() {
@@ -93,7 +95,6 @@ export default function ListingDetail() {
       return;
     }
 
-    // Parse images if it's a JSON string
     const parsed = { ...data };
     if (typeof parsed.images === "string") {
       try { parsed.images = JSON.parse(parsed.images); } catch { parsed.images = []; }
@@ -101,16 +102,15 @@ export default function ListingDetail() {
     if (!Array.isArray(parsed.images)) parsed.images = [];
     setListing(parsed);
     
-    // Fetch seller profile (use public view, phone is accessible via view)
+    // Fetch seller profile with phone/whatsapp
     const { data: profile } = await supabase
-      .from("profiles_public")
-      .select("*")
+      .from("profiles")
+      .select("username, avatar_url, is_verified, created_at, phone, whatsapp")
       .eq("user_id", data.user_id)
       .maybeSingle();
     
     setSeller(profile);
 
-    // Fetch related listings by same category (not same seller)
     let relatedQuery = supabase
       .from("listings_public")
       .select("*")
@@ -124,7 +124,6 @@ export default function ListingDetail() {
 
     const { data: related } = await relatedQuery.limit(4);
 
-    // Parse images for related listings
     const parsedRelated = (related || []).map((item: any) => ({
       ...item,
       images: parseImages(item.images),
@@ -135,15 +134,12 @@ export default function ListingDetail() {
   };
 
   const incrementViews = async () => {
-    // Silently increment views - not critical if it fails
     try {
       await supabase
         .from("listings")
         .update({ views_count: (listing?.views_count || 0) + 1 })
         .eq("id", id!);
-    } catch {
-      // Ignore errors
-    }
+    } catch {}
   };
 
   const checkFavorite = async () => {
@@ -154,32 +150,20 @@ export default function ListingDetail() {
       .eq("listing_id", listing.id)
       .eq("user_id", user.id)
       .maybeSingle();
-    
     setIsFavorited(!!data);
   };
 
   const toggleFavorite = async () => {
     if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to save favorites",
-      });
+      toast({ title: "Sign in required", description: "Please sign in to save favorites" });
       return;
     }
-
     if (isFavorited) {
-      await supabase
-        .from("favorites")
-        .delete()
-        .eq("listing_id", listing!.id)
-        .eq("user_id", user.id);
+      await supabase.from("favorites").delete().eq("listing_id", listing!.id).eq("user_id", user.id);
       setIsFavorited(false);
       toast({ title: "Removed from favorites" });
     } else {
-      await supabase.from("favorites").insert({
-        listing_id: listing!.id,
-        user_id: user.id,
-      });
+      await supabase.from("favorites").insert({ listing_id: listing!.id, user_id: user.id });
       setIsFavorited(true);
       toast({ title: "Added to favorites" });
     }
@@ -187,10 +171,7 @@ export default function ListingDetail() {
 
   const handleShare = async () => {
     if (navigator.share) {
-      await navigator.share({
-        title: listing?.title,
-        url: window.location.href,
-      });
+      await navigator.share({ title: listing?.title, url: window.location.href });
     } else {
       navigator.clipboard.writeText(window.location.href);
       toast({ title: "Link copied to clipboard" });
@@ -199,17 +180,13 @@ export default function ListingDetail() {
 
   const nextImage = () => {
     if (listing?.images) {
-      setCurrentImageIndex((prev) => 
-        prev === listing.images.length - 1 ? 0 : prev + 1
-      );
+      setCurrentImageIndex((prev) => prev === listing.images.length - 1 ? 0 : prev + 1);
     }
   };
 
   const prevImage = () => {
     if (listing?.images) {
-      setCurrentImageIndex((prev) => 
-        prev === 0 ? listing.images.length - 1 : prev - 1
-      );
+      setCurrentImageIndex((prev) => prev === 0 ? listing.images.length - 1 : prev - 1);
     }
   };
 
@@ -230,9 +207,7 @@ export default function ListingDetail() {
           <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <h1 className="font-display text-2xl font-bold mb-2">Listing Not Found</h1>
           <p className="text-muted-foreground mb-6">This listing may have been removed or doesn't exist.</p>
-          <Button asChild>
-            <Link to="/">Back to Home</Link>
-          </Button>
+          <Button asChild><Link to="/">Back to Home</Link></Button>
         </div>
       </Layout>
     );
@@ -241,48 +216,36 @@ export default function ListingDetail() {
   const TypeIcon = listing.listing_type === "product" ? Package : 
                    listing.listing_type === "service" ? Sparkles : Calendar;
 
+  const sellerPhone = seller?.phone?.replace(/[^0-9+]/g, '') || '';
+  const sellerWhatsapp = seller?.whatsapp?.replace(/[^0-9]/g, '') || sellerPhone.replace(/[^0-9]/g, '');
+
   return (
     <Layout>
-      <div className="container py-6 md:py-10">
+      <div className="container py-6 md:py-10 px-4">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-primary">Home</Link>
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6 overflow-x-auto">
+          <Link to="/" className="hover:text-primary shrink-0">Home</Link>
           <span>/</span>
-          <Link to={`/${listing.listing_type}s`} className="hover:text-primary capitalize">
+          <Link to={`/${listing.listing_type}s`} className="hover:text-primary capitalize shrink-0">
             {listing.listing_type}s
           </Link>
           <span>/</span>
           <span className="text-foreground truncate max-w-[200px]">{listing.title}</span>
         </nav>
 
-        <div className="grid lg:grid-cols-5 gap-8">
+        <div className="grid lg:grid-cols-5 gap-6 lg:gap-8">
           {/* Left Column - Images */}
           <div className="lg:col-span-3 space-y-4">
-            {/* Main Image */}
             <div className="relative aspect-[4/3] bg-muted rounded-2xl overflow-hidden">
               {listing.images?.length > 0 ? (
                 <>
-                  <img
-                    src={listing.images[currentImageIndex]}
-                    alt={listing.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={listing.images[currentImageIndex]} alt={listing.title} className="w-full h-full object-cover" />
                   {listing.images.length > 1 && (
                     <>
-                      <Button
-                        variant="glass"
-                        size="icon"
-                        className="absolute left-3 top-1/2 -translate-y-1/2"
-                        onClick={prevImage}
-                      >
+                      <Button variant="glass" size="icon" className="absolute left-3 top-1/2 -translate-y-1/2" onClick={prevImage}>
                         <ChevronLeft className="h-5 w-5" />
                       </Button>
-                      <Button
-                        variant="glass"
-                        size="icon"
-                        className="absolute right-3 top-1/2 -translate-y-1/2"
-                        onClick={nextImage}
-                      >
+                      <Button variant="glass" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2" onClick={nextImage}>
                         <ChevronRight className="h-5 w-5" />
                       </Button>
                       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
@@ -290,12 +253,7 @@ export default function ListingDetail() {
                           <button
                             key={i}
                             onClick={() => setCurrentImageIndex(i)}
-                            className={cn(
-                              "w-2 h-2 rounded-full transition-all",
-                              i === currentImageIndex 
-                                ? "bg-white w-4" 
-                                : "bg-white/50 hover:bg-white/80"
-                            )}
+                            className={cn("w-2 h-2 rounded-full transition-all", i === currentImageIndex ? "bg-white w-4" : "bg-white/50 hover:bg-white/80")}
                           />
                         ))}
                       </div>
@@ -307,14 +265,9 @@ export default function ListingDetail() {
                   <TypeIcon className="h-20 w-20 text-muted-foreground/50" />
                 </div>
               )}
-              
-              {/* Badges */}
               <div className="absolute top-3 left-3 flex flex-wrap gap-2">
                 {listing.is_sponsored && (
-                  <span className="sponsored-badge">
-                    <Star className="h-3 w-3" />
-                    Sponsored
-                  </span>
+                  <span className="sponsored-badge"><Star className="h-3 w-3" />Sponsored</span>
                 )}
                 {listing.is_featured && (
                   <Badge className="bg-lavender text-lavender-foreground">Featured</Badge>
@@ -322,17 +275,13 @@ export default function ListingDetail() {
               </div>
             </div>
 
-            {/* Thumbnail Strip */}
             {listing.images?.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {listing.images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentImageIndex(i)}
-                    className={cn(
-                      "shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all",
-                      i === currentImageIndex ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
-                    )}
+                    className={cn("shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all", i === currentImageIndex ? "border-primary" : "border-transparent opacity-70 hover:opacity-100")}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -340,9 +289,8 @@ export default function ListingDetail() {
               </div>
             )}
 
-            {/* Description */}
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <h2 className="font-display text-lg font-semibold mb-3">Description</h2>
                 <p className="text-muted-foreground whitespace-pre-wrap">{listing.description}</p>
               </CardContent>
@@ -351,80 +299,78 @@ export default function ListingDetail() {
 
           {/* Right Column - Details */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Title & Price */}
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <Badge variant="secondary" className="capitalize">
-                  <TypeIcon className="h-3 w-3 mr-1" />
-                  {listing.listing_type}
+                  <TypeIcon className="h-3 w-3 mr-1" />{listing.listing_type}
                 </Badge>
-                {listing.category && (
-                  <Badge variant="outline">{listing.category}</Badge>
-                )}
+                {listing.category && <Badge variant="outline">{listing.category}</Badge>}
               </div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold mb-3">{listing.title}</h1>
+              <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-3">{listing.title}</h1>
               
-              {/* Price */}
-              <div className="flex items-baseline gap-3">
+              <div className="flex items-baseline gap-3 flex-wrap">
                 {listing.is_free ? (
                   <span className="text-3xl font-bold text-primary">FREE</span>
                 ) : listing.price ? (
                   <>
                     {listing.original_price && listing.original_price > listing.price && (
-                      <span className="text-lg text-muted-foreground line-through">
-                        KES {listing.original_price.toLocaleString()}
-                      </span>
+                      <span className="text-lg text-muted-foreground line-through">KES {listing.original_price.toLocaleString()}</span>
                     )}
-                    <span className="text-3xl font-bold text-primary">
-                      KES {listing.price.toLocaleString()}
-                    </span>
+                    <span className="text-2xl sm:text-3xl font-bold text-primary">KES {listing.price.toLocaleString()}</span>
                   </>
                 ) : (
                   <span className="text-lg text-muted-foreground">Price on request</span>
                 )}
-                {listing.is_negotiable && (
-                  <Badge variant="outline" className="text-xs">Negotiable</Badge>
-                )}
+                {listing.is_negotiable && <Badge variant="outline" className="text-xs">Negotiable</Badge>}
               </div>
             </div>
 
-            {/* Quick Info */}
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 text-primary" />
-                {listing.location}
+                <MapPin className="h-4 w-4 text-primary shrink-0" /><span className="truncate">{listing.location}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="h-4 w-4 text-primary" />
-                {format(new Date(listing.created_at), "MMM d, yyyy")}
+                <Clock className="h-4 w-4 text-primary shrink-0" />{format(new Date(listing.created_at), "MMM d, yyyy")}
               </div>
               {listing.delivery_available && (
                 <div className="flex items-center gap-2 text-sm text-primary">
-                  <Truck className="h-4 w-4" />
-                  Delivery available
+                  <Truck className="h-4 w-4" />Delivery available
                 </div>
               )}
               {listing.event_date && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground col-span-2">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  Event: {format(new Date(listing.event_date), "PPP p")}
+                  <Calendar className="h-4 w-4 text-primary" />Event: {format(new Date(listing.event_date), "PPP p")}
                 </div>
               )}
             </div>
 
-            {/* Action Buttons */}
+            {/* Contact & Action Buttons */}
             <div className="flex gap-3 flex-wrap">
-              <Button 
-                variant={isFavorited ? "default" : "outline"} 
-                size="icon"
-                onClick={toggleFavorite}
-              >
+              <Button variant={isFavorited ? "default" : "outline"} size="icon" onClick={toggleFavorite}>
                 <Heart className={cn("h-4 w-4", isFavorited && "fill-current")} />
               </Button>
               <Button variant="outline" size="icon" onClick={handleShare}>
                 <Share2 className="h-4 w-4" />
               </Button>
-              {/* In-app Message Button */}
+              
+              {/* Call Button */}
+              {sellerPhone && (
+                <Button variant="outline" size="icon" className="text-primary" asChild>
+                  <a href={`tel:${sellerPhone}`}>
+                    <Phone className="h-4 w-4" />
+                  </a>
+                </Button>
+              )}
+              
+              {/* WhatsApp Button */}
+              {sellerWhatsapp && (
+                <Button variant="outline" size="icon" className="text-green-600" asChild>
+                  <a href={`https://wa.me/${sellerWhatsapp}?text=${encodeURIComponent(`Hi, I'm interested in your listing: ${listing.title}`)}`} target="_blank" rel="noopener noreferrer">
+                    <FaWhatsapp className="h-5 w-5" />
+                  </a>
+                </Button>
+              )}
+
               {listing && user?.id !== listing.user_id && (
                 <Button
                   variant="secondary"
@@ -432,11 +378,9 @@ export default function ListingDetail() {
                   onClick={() => startConversation(listing.id, listing.user_id)}
                   disabled={isCreating}
                 >
-                  <MessageCircle className="h-4 w-4" />
-                  Message
+                  <MessageCircle className="h-4 w-4" />Message
                 </Button>
               )}
-              
             </div>
 
             <Separator />
@@ -446,19 +390,17 @@ export default function ListingDetail() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       {seller.avatar_url ? (
                         <img src={seller.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
                       ) : (
                         <User className="h-6 w-6 text-primary" />
                       )}
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold flex items-center gap-1">
                         {seller.username}
-                        {seller.is_verified && (
-                          <Badge variant="secondary" className="text-xs">Verified</Badge>
-                        )}
+                        {seller.is_verified && <Badge variant="secondary" className="text-xs">Verified</Badge>}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Member since {format(new Date(seller.created_at), "MMM yyyy")}
@@ -466,17 +408,29 @@ export default function ListingDetail() {
                     </div>
                   </div>
                   
+                  {/* Contact icons row */}
+                  <div className="flex items-center gap-2 mt-2">
+                    {sellerPhone && (
+                      <Button variant="outline" size="sm" className="flex-1" asChild>
+                        <a href={`tel:${sellerPhone}`}><Phone className="h-4 w-4 mr-1" />Call</a>
+                      </Button>
+                    )}
+                    {sellerWhatsapp && (
+                      <Button variant="outline" size="sm" className="flex-1 text-green-600" asChild>
+                        <a href={`https://wa.me/${sellerWhatsapp}`} target="_blank" rel="noopener noreferrer">
+                          <FaWhatsapp className="h-4 w-4 mr-1" />WhatsApp
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+
                   <Button variant="outline" size="sm" className="w-full mt-2" asChild>
-                    <Link to={`/profile/${listing.user_id}`}>
-                      <User className="h-4 w-4" />
-                      View Profile
-                    </Link>
+                    <Link to={`/profile/${listing.user_id}`}><User className="h-4 w-4" />View Profile</Link>
                   </Button>
                 </CardContent>
               </Card>
             )}
 
-            {/* Safety Tips */}
             <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
               <CardContent className="p-4">
                 <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-2">Safety Tips</h4>
@@ -497,11 +451,7 @@ export default function ListingDetail() {
             <h2 className="font-display text-xl font-bold mb-6">Related Listings</h2>
             <div className="listing-grid">
               {relatedListings.map((item) => (
-                <Link
-                  key={item.id}
-                  to={`/${item.listing_type}s/${item.id}`}
-                  className="listing-card"
-                >
+                <Link key={item.id} to={`/${item.listing_type}s/${item.id}`} className="listing-card">
                   <div className="aspect-[4/3] bg-muted overflow-hidden">
                     {item.images?.[0] ? (
                       <img src={item.images[0]} alt={item.title} className="w-full h-full object-cover" />
@@ -514,8 +464,7 @@ export default function ListingDetail() {
                   <div className="p-3">
                     <h3 className="font-medium text-sm line-clamp-2 mb-1">{item.title}</h3>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-                      <MapPin className="h-3 w-3" />
-                      {item.location}
+                      <MapPin className="h-3 w-3" />{item.location}
                     </div>
                     <p className="text-primary font-bold text-sm">
                       {item.is_free ? "FREE" : item.price ? `KES ${item.price.toLocaleString()}` : "Price on request"}
