@@ -315,7 +315,7 @@ export default function Profile() {
                         title={listing.title}
                         price={listing.price || 0}
                         originalPrice={listing.original_price || undefined}
-                        image={listing.images?.[0] || "/placeholder.svg"}
+                        image={parseImages(listing.images)?.[0] || "/placeholder.svg"}
                         location={listing.location}
                         category={listing.listing_type}
                         isSponsored={listing.is_sponsored}

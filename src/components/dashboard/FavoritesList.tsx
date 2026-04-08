@@ -110,9 +110,9 @@ export function FavoritesList() {
                 className="group relative rounded-lg overflow-hidden border bg-card hover:shadow-md transition-shadow"
               >
                 <div className="aspect-square bg-muted relative">
-                  {listing.images?.[0] ? (
+                  {parseImages(listing.images)?.[0] ? (
                     <img
-                      src={listing.images[0]}
+                      src={parseImages(listing.images)[0]}
                       alt={listing.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
