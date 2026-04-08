@@ -218,6 +218,7 @@ export default function Admin() {
             )}
 
             {activeTab === "sponsors" && <SponsorRequestsManager />}
+            {activeTab === "featured" && <FeaturedRequestsManager />}
             {activeTab === "shop-requests" && <ShopRequestsManager />}
             {activeTab === "shop-promos" && <ShopPromotionsManager />}
 
