@@ -184,7 +184,7 @@ export function SponsorRequestsManager() {
                       <div className="w-10 h-10 rounded bg-muted overflow-hidden shrink-0">
                         {request.listing?.images?.[0] ? (
                           <img 
-                            src={request.listing.images[0]} 
+                            src={parseImages(request.listing.images)[0]} 
                             alt="" 
                             className="w-full h-full object-cover" 
                           />
