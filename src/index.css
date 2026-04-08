@@ -138,6 +138,13 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  html {
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -329,6 +336,13 @@
 }
 
 @layer utilities {
+  /* RGB gradient animation for story images */
+  @keyframes rgbShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
   /* Glass Effect */
   .glass {
     @apply bg-white/80 backdrop-blur-lg;
