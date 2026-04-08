@@ -204,6 +204,22 @@ export function Navbar() {
                     <X className="h-5 w-5" />
                   </Button>
                 </div>
+                {/* Sign In / Post Ad at top for guests */}
+                {!user && (
+                  <div className="p-4 border-b space-y-2">
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link to="/login" onClick={() => setIsOpen(false)}>
+                        <User className="h-4 w-4" />
+                        Sign In
+                      </Link>
+                    </Button>
+                    <Button className="w-full" asChild>
+                      <Link to="/register" onClick={() => setIsOpen(false)}>
+                        Post Ad
+                      </Link>
+                    </Button>
+                  </div>
+                )}
                 <nav className="flex-1 p-4 space-y-2">
                   {navLinks.map((link) => {
                     const Icon = link.icon;
@@ -275,7 +291,7 @@ export function Navbar() {
                   )}
                 </nav>
                 <div className="p-4 border-t space-y-3">
-                  {user ? (
+                  {user && (
                     <Button
                       variant="outline"
                       className="w-full"
@@ -287,20 +303,6 @@ export function Navbar() {
                       <LogOut className="h-4 w-4" />
                       Sign Out
                     </Button>
-                  ) : (
-                    <>
-                      <Button variant="outline" className="w-full" asChild>
-                        <Link to="/login" onClick={() => setIsOpen(false)}>
-                          <User className="h-4 w-4" />
-                          Sign In
-                        </Link>
-                      </Button>
-                      <Button className="w-full" asChild>
-                        <Link to="/register" onClick={() => setIsOpen(false)}>
-                          Post Ad
-                        </Link>
-                      </Button>
-                    </>
                   )}
                 </div>
               </div>
