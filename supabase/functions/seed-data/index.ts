@@ -11,6 +11,7 @@ serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const dbUrl = Deno.env.get("SUPABASE_DB_URL")!;
   const admin = createClient(supabaseUrl, serviceRoleKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
@@ -21,12 +22,16 @@ serve(async (req) => {
     const results: string[] = [];
 
     if (action === "migrate") {
-      // Run migration SQL via rpc
-      const { error } = await admin.rpc("exec_sql", { sql: data.sql });
-      if (error) {
-        results.push(`migration error: ${error.message}`);
-      } else {
-        results.push("migration applied");
+      // Use pg driver to run raw SQL
+      const { default: postgres } = await import("https://deno.land/x/postgresjs@v3.4.4/mod.js");
+      const sql = postgres(dbUrl);
+      try {
+        await sql.unsafe(data.sql);
+        results.push("migration applied successfully");
+      } catch (e) {
+        results.push(`migration error: ${e.message}`);
+      } finally {
+        await sql.end();
       }
       return new Response(JSON.stringify({ results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
@@ -44,17 +49,21 @@ serve(async (req) => {
         const { error } = await admin.from(t).delete().neq("id", "00000000-0000-0000-0000-000000000000");
         if (error && !error.message.includes("Could not find")) {
           results.push(`${t}: ${error.message}`);
-        } else {
-          results.push(`${t}: cleared`);
         }
       }
-      const { data: authUsers } = await admin.auth.admin.listUsers({ perPage: 1000 });
-      if (authUsers?.users) {
-        for (const u of authUsers.users) {
+      // Delete auth users in pages
+      let page = 1;
+      let totalDeleted = 0;
+      while (true) {
+        const { data: res } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+        if (!res?.users?.length) break;
+        for (const u of res.users) {
           await admin.auth.admin.deleteUser(u.id);
+          totalDeleted++;
         }
-        results.push(`auth.users: deleted ${authUsers.users.length}`);
+        page++;
       }
+      results.push(`Cleared all tables. Deleted ${totalDeleted} auth users.`);
       return new Response(JSON.stringify({ results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
@@ -71,7 +80,7 @@ serve(async (req) => {
         });
         if (error && !error.message.includes("already")) {
           errors++;
-          if (errors <= 3) results.push(`auth ${u.email}: ${error.message}`);
+          if (errors <= 5) results.push(`auth ${u.email}: ${error.message}`);
         } else {
           created++;
         }
@@ -82,7 +91,7 @@ serve(async (req) => {
         const { error } = await admin.from("user_roles").upsert(data.user_roles, { onConflict: "id" });
         results.push(`user_roles: ${error ? error.message : `${data.user_roles.length} rows`}`);
       }
-      return new Response(JSON.stringify({ results, count: users.length }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     if (action === "seed_table") {
